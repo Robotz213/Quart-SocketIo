@@ -6,9 +6,8 @@ from typing import (
     Any,
     Literal,
     TypedDict,
+    cast,
 )
-
-from quart import Quart
 
 if TYPE_CHECKING:
     import asyncio
@@ -58,7 +57,7 @@ class Config(TypedDict):
     async_handlers: bool
     always_connect: bool
     namespaces: str | list[str]
-    async_mode: AsyncMode = "asgi"
+    async_mode: AsyncMode
     ping_interval: int | tuple
     ping_timeout: int
     max_http_buffer_size: int
@@ -75,12 +74,10 @@ class Config(TypedDict):
     channel: Channel
 
 
-def wrap_config[T](cls: T) -> type[Config]:
+def wrap_config(cls: object) -> type[Config]:
 
-    return cls
+    return cast("type[Config]", cls)
 
-
-type Any = any
 
 HTTPProtocolType = Literal["auto", "h11", "httptools"]
 WSProtocolType = Literal["auto", "none", "websockets", "wsproto"]
@@ -102,16 +99,16 @@ class RunKwargs(TypedDict):
     ws_ping_interval: float | None
     ws_ping_timeout: float | None
     ws_per_message_deflate: bool
-    lifespan: LifespanType = "auto"
+    lifespan: LifespanType
     env_file: str | PathLike[str] | None
     log_config: dict[str, Any] | str | RawConfigParser | IO[Any] | None
     log_level: str | int
     access_log: bool
     use_colors: bool
-    interface: InterfaceType = "auto"
+    interface: InterfaceType
     reload: bool
     reload_dirs: list[str] | str
-    reload_delay: float = 0.25
+    reload_delay: float
     reload_includes: list[str] | str
     reload_excludes: list[str] | str
     workers: int
@@ -119,12 +116,12 @@ class RunKwargs(TypedDict):
     server_header: bool
     date_header: bool
     forwarded_allow_ips: list[str] | str
-    root_path: str = ""
+    root_path: str
     limit_concurrency: int
     limit_max_requests: int
-    backlog: int = 2048
-    timeout_keep_alive: int = 5
-    timeout_notify: int = 30
+    backlog: int
+    timeout_keep_alive: int
+    timeout_notify: int
     timeout_graceful_shutdown: int
     callback_notify: Callable[..., Awaitable[None]]
     ssl_keyfile: str | PathLike[str]

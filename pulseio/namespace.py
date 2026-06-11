@@ -41,7 +41,7 @@ class Namespace(BaseNamespace):
 
     async def make_websocket(self, **kwargs: Any) -> Request:
         """Create a websocket dictionary for the namespace."""
-        return await self.socketio.make_websocket(**kwargs)
+        return await self.socketio.make_websocket(**kwargs)  # pyright: ignore[reportReturnType]
 
     async def trigger_event(
         self,

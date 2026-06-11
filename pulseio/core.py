@@ -49,15 +49,18 @@ if TYPE_CHECKING:
 
     from .typing._config import RunKwargs
 
-type Any = any
+
+class EnvironError(Exception):
+    def __init__(self, *args: object) -> None:
+        Exception.__init__(self, *args)
 
 
 class Controller:
-    server: SocketIo = None
+    server: SocketIo = None  # pyright: ignore[reportAssignmentType]
     asgi_server: Server | HypercornServer = None
     shutdown_event = Event()
-    config: Config = None
-    sockio_mw: Middleware = None
+    config: Config = None  # pyright: ignore[reportAssignmentType]
+    sockio_mw: Middleware = None  # pyright: ignore[reportAssignmentType]
 
     @overload
     def __init__(self) -> None: ...
@@ -112,7 +115,7 @@ class Controller:
         self,
         **kwargs: Kw,
     ) -> None:
-        app: Quart = kwargs.get("app")
+        app: Quart = kwargs.get("app")  # pyright: ignore[reportAssignmentType]
         self.config = Config(app=app, **kwargs)
         self.server_options = self.config
         if app is not None or self.config.get("message_queue"):
@@ -120,13 +123,13 @@ class Controller:
 
     def configure_server(self) -> socketio.AsyncServer:
         server = socketio.AsyncServer(**self.config)
-        for handler in self.config["handlers"]:
+        for handler in self.config["handlers"]:  # pyright: ignore[reportGeneralTypeIssues]
             server.on(handler[0], handler[1], namespace=handler[2])
 
         for namespace_handler in self.config["namespace_handlers"]:
             server.register_namespace(namespace_handler)
 
-        server._trigger_event = self._trigger_event  # noqa: SLF001
+        server._trigger_event = self._trigger_event  # pyright: ignore[reportAttributeAccessIssue]
         return server
 
     def init_app(
@@ -156,7 +159,7 @@ class Controller:
             self.json_setting(app)
 
         socketio_path = self.server_options["socketio_path"]
-        self.server = self.configure_server()
+        self.server = self.configure_server()  # pyright: ignore[reportAttributeAccessIssue]
 
         kw = {
             "socketio_app": self.server,
@@ -258,7 +261,7 @@ class Controller:
                 async with app.app_context():
                     return quart_json.loads(*args, **kwargs)
 
-        self.config["json"] = QuartSafeJson
+        self.config["json"] = QuartSafeJson  # pyright: ignore[reportGeneralTypeIssues]
 
     @classmethod
     def load_headers(cls, environ: dict[str, Any]) -> Headers:  # noqa: C901
@@ -326,13 +329,13 @@ class Controller:
         session_obj: _ManagedSession | Any = (
             environ.setdefault("saved_session", _ManagedSession(session))
             if self.config["manage_session"]
-            else session._get_current_object()  # noqa: SLF001
+            else session._get_current_object()  # pyright: ignore[reportAttributeAccessIssue]
         )
         ctx = (
-            quart.globals.websocket_ctx._get_current_object()  # noqa: SLF001
+            quart.globals.websocket_ctx._get_current_object()  # pyright: ignore[reportAttributeAccessIssue]
             if hasattr(quart, "globals")
             and hasattr(quart.globals, "websocket_ctx")
-            else quart._websocket_ctx_stack.top  # noqa: SLF001
+            else quart._websocket_ctx_stack.top  # pyright: ignore[reportAttributeAccessIssue]
         )
         if self.config["manage_session"]:
             ctx.session = session_obj
@@ -340,7 +343,7 @@ class Controller:
         # when Quart is managing the user session, it needs to save it
         if not hasattr(session_obj, "modified") or session_obj.modified:
             resp = app.response_class()
-            app.session_interface.save_session(app, session_obj, resp)
+            app.session_interface.save_session(app, session_obj, resp)  # pyright: ignore[reportUnusedCoroutine]
 
     async def make_request(
         self,
@@ -358,20 +361,24 @@ class Controller:
             root_path=environ["asgi.scope"].get("root_path", ""),
             http_version=environ["SERVER_PROTOCOL"],
             scope=environ["asgi.scope"],
-            send_push_promise=self.send_push_promise,
+            send_push_promise=self.send_push_promise,  # pyright: ignore[reportAttributeAccessIssue]
         )
 
-        request.sid = sid
-        request.namespace = namespace
+        request.sid = sid  # pyright: ignore[reportAttributeAccessIssue]
+        request.namespace = namespace  # pyright: ignore[reportAttributeAccessIssue]
 
         return request
 
-    async def make_websocket(self, **kwargs: Any) -> Request:
+    async def make_websocket(self, **kwargs: Any) -> Websocket:
         kwargs = kwargs or {}
         environ = self.server.get_environ(
             kwargs["sid"],
             namespace=kwargs["namespace"],
         )
+
+        if not environ:
+            raise EnvironError
+
         websock = Websocket(
             path=environ["PATH_INFO"],
             query_string=environ["asgi.scope"]["query_string"],
@@ -386,7 +393,7 @@ class Controller:
             close=environ["asgi.scope"].get("close"),
             scope=environ["asgi.scope"],
         )
-        websock.sid = kwargs.get("sid", None)
+        websock.sid = kwargs.get("sid", None)  # pyright: ignore[reportAttributeAccessIssue]
 
         return websock
 
@@ -396,7 +403,7 @@ class Controller:
     ) -> None:
 
         event, handler, namespace = handler_args
-        self.on(event=event, namespace=namespace)(handler)
+        self.on(event=event, namespace=namespace)(handler)  # pyright: ignore[reportAttributeAccessIssue]
 
     def register_namespace(self, namespace_handler: Namespace) -> None:
         """Register a namespace handler object.
@@ -424,6 +431,6 @@ class Controller:
             raise_value_error("Not a namespace instance")
         if self.server is None:
             raise_runtime_error("SocketIO server is not initialized")
-        namespace_handler._set_server(None)  # noqa: SLF001
-        self.server.unregister_namespace(namespace_handler)
+        namespace_handler._set_server(None)
+        self.server.unregister_namespace(namespace_handler)  # pyright: ignore[reportAttributeAccessIssue]
         self.config["namespace_handlers"].remove(namespace_handler)
