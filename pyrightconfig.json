@@ -1,4 +1,4 @@
 {
-  "reportMissingModuleSource": "none",
-  "typeCheckingMode": "off"
+  "typeCheckingMode": "basic",
+  "reportArgumentType": "none"
 }
