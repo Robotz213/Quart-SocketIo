@@ -1,6 +1,6 @@
 [project]
 name = "pulseio"
-version = "0.1.2"
+version = "0.1.3"
 authors = [{ name = "Nicholas Silva", email = "nicholas@robotz.dev" }]
 description = "Async Socket.IO integration for Quart applications"
 classifiers = [
