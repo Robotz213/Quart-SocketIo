@@ -10,7 +10,7 @@ from pulseio.common.exceptions import raise_value_error
 if TYPE_CHECKING:
     from uvicorn import Server
 
-    from .typing._config import Config
+    from ._types._config import Config
 
 ACCESS_FMT = (
     '%(levelprefix)s %(client_addr)s - "%(request_line)s" %(status_code)s'

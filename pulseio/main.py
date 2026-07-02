@@ -21,8 +21,7 @@ if TYPE_CHECKING:
 
     from werkzeug.datastructures.headers import Headers
 
-    from pulseio._types import Any
-    from pulseio.typing import Function
+    from pulseio._types import Any, Function
 
 
 class reason:  # noqa: N801

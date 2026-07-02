@@ -3,7 +3,7 @@ from __future__ import annotations
 from collections import UserDict
 from typing import TYPE_CHECKING
 
-from pulseio.typing._config import wrap_config
+from pulseio._types._config import wrap_config
 
 if TYPE_CHECKING:
     from pulseio._types import Any

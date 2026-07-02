@@ -34,7 +34,7 @@ if TYPE_CHECKING:
 
     from uvicorn import Server
 
-    from pulseio.typing import (
+    from pulseio._types import (
         Any,
         AsyncMode,
         Channel,
@@ -45,9 +45,9 @@ if TYPE_CHECKING:
         SocketIo,
         Transports,
     )
-    from pulseio.typing._quart import CustomJsonClass
+    from pulseio._types._quart import CustomJsonClass
 
-    from .typing._config import RunKwargs
+    from ._types._config import RunKwargs
 
 
 class EnvironError(Exception):

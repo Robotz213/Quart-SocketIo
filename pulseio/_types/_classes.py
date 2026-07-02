@@ -6,7 +6,7 @@ from typing import TypeVar
 from engineio import AsyncServer as AsyncEIOServer
 from socketio import AsyncServer
 
-from ._types import P
+from ._main import P
 
 
 class SocketIo(AsyncServer, AsyncEIOServer):
