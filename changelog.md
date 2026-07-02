@@ -2,6 +2,39 @@
 
 Todas as mudancas relevantes deste projeto serao documentadas neste arquivo.
 
+## [0.0.1.post1] - 2026-07-02
+
+### Documentacao
+
+- Adicionadas e normalizadas docstrings em ingles no pacote `quart_socketio`.
+- Atualizada a documentacao da API para refletir o modulo publico `utils`.
+- Adicionado guia de contribuicao em ingles e portugues do Brasil.
+- Incluida a pagina de contribuicao na navegacao do MkDocs.
+- Atualizado o link do PyPI no `README.md`.
+- Atualizado o contato de seguranca no `SECURITY.md`.
+
+### Qualidade e Manutencao
+
+- Adicionada configuracao de cobertura de testes no `pyproject.toml`.
+- Adicionados testes para core, middleware, namespaces, helpers de contexto e
+  inicializacao do Uvicorn.
+- Configurado o Read the Docs para instalar dependencias de documentacao a
+  partir de `docs/requirements.txt`.
+- Adicionado `docs/requirements.txt` com dependencias de build da documentacao.
+
+### Alterado
+
+- Renomeado o modulo interno `quart_socketio._utils` para
+  `quart_socketio.utils`.
+- Atualizados imports publicos para expor os helpers a partir de `utils`.
+
+### Compatibilidade
+
+- A API publica via `from quart_socketio import emit, send, call, ...`
+  permanece disponivel.
+- Imports diretos de `quart_socketio._utils` devem ser substituidos por
+  `quart_socketio.utils`.
+
 ## [0.0.1] - 2026-07-02
 
 ### Adicionado
