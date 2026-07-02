@@ -1,12 +1,12 @@
 from __future__ import annotations
 
-from typing import TYPE_CHECKING
+# pyright: reportAttributeAccessIssue=false
+from typing import TYPE_CHECKING, Any
 
 from quart import current_app, request
 
 if TYPE_CHECKING:
     from pulseio import SocketIO
-    from pulseio._types import Any
 
 
 async def emit(event: str, *args: Any, **kwargs: Any) -> None:
@@ -175,7 +175,7 @@ async def send(message: Any, **kwargs: Any) -> None:
 
     socketio: SocketIO = current_app.extensions["socketio"]
     return await socketio.send(
-        message,
+        data=message,
         json=json,
         namespace=namespace,
         to=to,

@@ -1,38 +1,34 @@
 from __future__ import annotations
 
-from typing import TYPE_CHECKING, NoReturn
-
-if TYPE_CHECKING:
-    from pulseio._types import Any
+from typing import Any, NoReturn
 
 
 class QuartTypeError(TypeError):
     def __init__(self, message: str, *args: Any) -> None:
-        super().__init__(*args)
+        super().__init__(message, *args)
 
 
 class QuartValueError(ValueError):
     def __init__(self, message: str, *args: Any) -> None:
-        super().__init__(*args)
+        super().__init__(message, *args)
 
 
 class QuartRuntimeError(RuntimeError):
     def __init__(self, message: str, *args: Any) -> None:
-        super().__init__(*args)
+        super().__init__(message, *args)
 
 
 class QuartSocketioError(Exception):
-    def __init__(self, exc: Exception, *args: Any) -> None:
-
-        super().__init__(*args)
+    def __init__(self, exc: Exception | str, *args: Any) -> None:
+        super().__init__(exc, *args)
 
 
 def raise_runtime_error(message: str) -> NoReturn:
-    raise QuartTypeError(message=message)
+    raise QuartRuntimeError(message=message)
 
 
 def raise_value_error(message: str) -> NoReturn:
-    raise QuartTypeError(message=message)
+    raise QuartValueError(message=message)
 
 
 def raise_type_error(message: str) -> NoReturn:

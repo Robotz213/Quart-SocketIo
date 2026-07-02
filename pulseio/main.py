@@ -1,9 +1,10 @@
 from __future__ import annotations
 
+# pyright: reportAttributeAccessIssue=false
 import traceback
 from functools import wraps
 from inspect import iscoroutinefunction
-from typing import TYPE_CHECKING, ClassVar, cast
+from typing import TYPE_CHECKING, Any, cast
 
 from quart import Quart, has_request_context
 from quart import websocket as request
@@ -17,11 +18,11 @@ from pulseio.core import Controller
 from .namespace import Namespace
 
 if TYPE_CHECKING:
-    from collections.abc import Callable, Coroutine
+    from collections.abc import Callable
 
     from werkzeug.datastructures.headers import Headers
 
-    from pulseio._types import Any, Function
+    from pulseio._types import Function
 
 
 class reason:  # noqa: N801
@@ -42,7 +43,10 @@ class reason:  # noqa: N801
 class SocketIO(Controller):
     reason: type[reason] = reason
 
-    enviroments: ClassVar[dict[str, dict[str, Any]]] = {}
+    def __init__(self, **kwargs: Any) -> None:
+        self.environments: dict[str, dict[str, Any]] = {}
+        self.enviroments = self.environments
+        super().__init__(**kwargs)
 
     async def _trigger_event(  # noqa: C901
         self,
@@ -62,7 +66,7 @@ class SocketIO(Controller):
         environ = cast("dict[str, Any]", args[3] if len(args) > 3 else {})
 
         if event == "connect":
-            self.enviroments[sid] = environ
+            self.environments[sid] = environ
 
         else:
             if isinstance(environ, dict):
@@ -124,13 +128,13 @@ class SocketIO(Controller):
 
         return self.server.not_handled
 
-    async def _handle_event[**P, T](
+    async def _handle_event(
         self,
         event: str,
         namespace: str | None,
         sid: str | None,
         data: dict[str, Any],
-        handler: Callable[P, T],
+        handler: Callable[..., Any],
         environ: dict[str, Any] | None = None,
     ) -> Any:
         app: Quart = self.sockio_mw.quart_app
@@ -156,7 +160,7 @@ class SocketIO(Controller):
         )
         async with app.request_context(request_ctx_sio):
             if not self.config["manage_session"]:
-                await self.handle_session(request.namespace)
+                await self.handle_session(environ or {})
 
             try:
                 if iscoroutinefunction(handler):
@@ -169,10 +173,14 @@ class SocketIO(Controller):
             except Exception as e:  # noqa: BLE001
                 err_more = "".join(traceback.format_exception(e))  # noqa: F841
                 err = "".join(traceback.format_exception_only(e))
-                self.config["app"].error(err)
+                self.config["app"].logger.error(err)
                 return err
 
-    def on(self, event: str, namespace: str = "/") -> Function:
+    def on(
+        self,
+        event: str,
+        namespace: str = "/",
+    ) -> Callable[[Function], Function]:
         """Register a SocketIO event handler.
 
         This decorator must be applied to SocketIO event handlers. Example::
@@ -196,8 +204,8 @@ class SocketIO(Controller):
         def decorator(handler: Function) -> Function:
             @wraps(handler)
             async def _handler(
-                **kwargs: str | int | bool,
-            ) -> Any | int | bool:
+                **kwargs: Any,
+            ) -> Any:
                 """Process the event."""
                 kwargs = kwargs.copy()
                 kwargs.update({"handler": handler})
@@ -219,11 +227,11 @@ class SocketIO(Controller):
 
         return decorator
 
-    def event[**P, T](
+    def event(
         self,
-        *args: P.args,
-        **kwargs: P.kwargs,
-    ) -> Callable[[Callable[P, T]], Callable[P, T]]:
+        *args: Any,
+        **kwargs: Any,
+    ) -> Any:
         """Register an event handler.
 
         This is a simplified version of the ``on()`` method that takes the
@@ -254,16 +262,16 @@ class SocketIO(Controller):
             return self.on(args[0].__name__)(args[0])
         # the decorator was invoked with arguments
 
-        def set_handler[T](handler: Callable[P, T]) -> Callable[P, T]:
+        def set_handler(handler: Callable[..., Any]) -> Callable[..., Any]:
             return self.on(handler.__name__, *args, **kwargs)(handler)
 
         return set_handler
 
-    def get_handler[**P, T](
+    def get_handler(
         self,
         event: str,
         namespace: str,
-    ) -> Callable[P, T] | None:
+    ) -> Callable[..., Any] | None:
         filter_ = list(
             filter(
                 lambda x: x[0] == event and x[2] == namespace,
@@ -272,7 +280,7 @@ class SocketIO(Controller):
         )
         return filter_[0][1] if len(filter_) > 0 else None
 
-    def get_namespace_handler(self, namespace: str) -> Namespace:
+    def get_namespace_handler(self, namespace: str) -> Namespace | None:
 
         handler = None
         if namespace in self.server.namespace_handlers:
@@ -287,9 +295,12 @@ class SocketIO(Controller):
         namespace: str,
     ) -> dict[str, Any]:
 
-        return self.enviroments.get(
-            sid,
-            self.server.get_environ(sid, namespace),
+        return (
+            self.environments.get(
+                sid,
+                self.server.get_environ(sid, namespace),
+            )
+            or {}
         )
 
     def _update_kwargs(
@@ -351,7 +362,7 @@ class SocketIO(Controller):
     def on_error(
         self,
         namespace: str = "/",
-    ) -> Function:
+    ) -> Callable[[Function], Function]:
         """Define a custom error handler for SocketIO events.
 
         This decorator can be applied to a function that acts as an error
@@ -370,7 +381,7 @@ class SocketIO(Controller):
         def decorator(exception_handler: Function) -> Function:
             if not callable(exception_handler):
                 raise_value_error("exception_handler must be callable")
-            self.config["debug"][namespace] = exception_handler
+            self.config["exception_handlers"][namespace] = exception_handler
             return exception_handler
 
         return decorator
@@ -395,10 +406,10 @@ class SocketIO(Controller):
         self.config["default_exception_handler"] = exception_handler
         return exception_handler
 
-    def on_event[**P, T](
+    def on_event(
         self,
         event: str,
-        handler: Callable[P, T],
+        handler: Callable[..., Any],
         namespace: str = "/",
     ) -> None:
         """Register a SocketIO event handler.
@@ -426,16 +437,16 @@ class SocketIO(Controller):
         """
         self.on(event=event, namespace=namespace)(handler)
 
-    async def emit[**P, T](
+    async def emit(
         self,
-        *args: Any,
-        event: Any,
+        event: str,
         data: Any | None = None,
+        *args: Any,
         to: Any | None = None,
         room: Any | None = None,
         skip_sid: Any | None = None,
         namespace: Any | None = None,
-        callback: Callable[P, T] | None = None,
+        callback: Callable[..., Any] | None = None,
         ignore_queue: bool = False,
         **kwargs: Any,
     ) -> None:
@@ -482,23 +493,17 @@ class SocketIO(Controller):
             # wrap the callback so that it sets app app and request contexts
             sid = None
             original_callback = callback
-            original_namespace = namespace
             if has_request_context():
                 sid = getattr(request, "sid", None)
-                original_namespace = getattr(request, "namespace", None)
 
             async def _callback_wrapper(
-                *args: P.args,
-                **kwargs: P.kwargs,
-            ) -> Coroutine[Any, Any, Any]:
-                return await self._handle_event(
-                    original_callback,
-                    None,
-                    original_namespace,
-                    sid,
-                    *args,
-                    **kwargs,
-                )
+                *args: Any,
+                **kwargs: Any,
+            ) -> Any:
+                if iscoroutinefunction(original_callback):
+                    return await original_callback(*args, **kwargs)
+
+                return original_callback(*args, **kwargs)
 
             if sid:
                 # the callback wrapper above will install a request context
@@ -660,7 +665,7 @@ class SocketIO(Controller):
         """
         return self.server.start_background_task(target, *args, **kwargs)
 
-    def sleep(self, seconds: float = 0) -> None:
+    def sleep(self, seconds: float = 0) -> Any:
         """Sleep for the requested amount of time using the appropriate async model.
 
         This is a utility function that applications can use to put a task to

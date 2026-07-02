@@ -1,21 +1,16 @@
 from __future__ import annotations
 
 from collections import UserDict
-from typing import TYPE_CHECKING
-
-from pulseio._types._config import wrap_config
-
-if TYPE_CHECKING:
-    from pulseio._types import Any
+from copy import deepcopy
+from typing import Any
 
 
-@wrap_config
-class Config(UserDict):
+class Config(UserDict[str, Any]):
     """Configuration for the Quart-SocketIO application."""
 
     def __init__(self, **kwargs: Any) -> None:
 
-        super().__init__(DEFAULTS)
+        super().__init__(deepcopy(DEFAULTS))
 
         self.update(**kwargs)
 

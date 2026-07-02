@@ -1,4 +1,4 @@
-include README.md LICENSE tox.ini test_socketio.py
+include README.md LICENSE
 recursive-include docs *
 recursive-exclude docs/_build *
 recursive-include tests *

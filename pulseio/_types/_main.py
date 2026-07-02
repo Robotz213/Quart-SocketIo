@@ -23,7 +23,7 @@ type QueueClasses = type[
 ]
 type HypercornServer = object
 type QueueClassMap = dict[TupleLiteral, QueueClasses]
-type TExceptionHandler[**P, T] = Callable[P, T]
+type TExceptionHandler = Callable[..., Any]
 type Channel = Literal["quart-socketio"]
 
 __all__ = [

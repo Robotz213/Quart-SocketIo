@@ -24,7 +24,7 @@ from pulseio.common.exceptions import (
     raise_value_error,
 )
 from pulseio.config import Config
-from pulseio.middleare import QuartSocketIOMiddleware as Middleware
+from pulseio.middleware import QuartSocketIOMiddleware as Middleware
 from pulseio.namespace import Namespace
 
 from ._manager import _ManagedSession

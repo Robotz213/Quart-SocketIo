@@ -60,6 +60,7 @@ class CustomJsonClass(Protocol):
         the ``cls`` kwarg; otherwise ``JSONEncoder`` is used.
 
         """  # noqa: E501
+        ...
 
     @staticmethod
     def dumps(
@@ -116,9 +117,10 @@ class CustomJsonClass(Protocol):
         the ``cls`` kwarg; otherwise ``JSONEncoder`` is used.
 
         """  # noqa: E501
+        ...
 
     @staticmethod
-    def load[T](
+    def load(
         fp,  # noqa: ANN001
         *,
         cls=None,  # noqa: ANN001
@@ -128,7 +130,7 @@ class CustomJsonClass(Protocol):
         parse_constant=None,  # noqa: ANN001
         object_pairs_hook=None,  # noqa: ANN001
         **kw,  # noqa: ANN003
-    ) -> T:
+    ) -> object:
         """Deserialize ``fp`` (a ``.read()``-supporting file-like object containing a JSON document) to a Python object.
 
         ``object_hook`` is an optional function that will be called with the
@@ -145,9 +147,10 @@ class CustomJsonClass(Protocol):
         To use a custom ``JSONDecoder`` subclass, specify it with the ``cls``
         kwarg; otherwise ``JSONDecoder`` is used.
         """  # noqa: E501
+        ...
 
     @staticmethod
-    def loads[T](
+    def loads(
         s,  # noqa: ANN001
         *,
         cls=None,  # noqa: ANN001
@@ -157,7 +160,7 @@ class CustomJsonClass(Protocol):
         parse_constant=None,  # noqa: ANN001
         object_pairs_hook=None,  # noqa: ANN001
         **kw,  # noqa: ANN003
-    ) -> T:
+    ) -> object:
         """Deserialize ``s`` (a ``str``, ``bytes`` or ``bytearray`` instance containing a JSON document) to a object.
 
         ``object_hook`` is an optional function that will be called with the
@@ -189,3 +192,4 @@ class CustomJsonClass(Protocol):
         To use a custom ``JSONDecoder`` subclass, specify it with the ``cls``
         kwarg; otherwise ``JSONDecoder`` is used.
         """  # noqa: E501
+        ...

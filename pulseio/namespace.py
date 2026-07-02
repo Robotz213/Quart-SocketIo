@@ -2,22 +2,24 @@ from __future__ import annotations
 
 import traceback
 from inspect import iscoroutinefunction
-from typing import TYPE_CHECKING, cast
+from typing import TYPE_CHECKING, Any, cast
 
-from quart import Quart, Request, request
 from socketio import AsyncNamespace as BaseNamespace
 from socketio import AsyncServer
+from socketio.exceptions import (
+    ConnectionRefusedError as SocketIOConnectionRefusedError,
+)
 
 from pulseio.common.exceptions import QuartSocketioError
-from pulseio.main import SocketIOConnectionRefusedError
 
 if TYPE_CHECKING:
     from collections.abc import Callable
 
     from flask.sessions import SessionMixin
+    from quart import Quart, Request
 
     from pulseio import SocketIO
-    from pulseio._types import Any, Function
+    from pulseio._types import Function
 
 
 class Namespace(BaseNamespace):
@@ -90,14 +92,14 @@ class Namespace(BaseNamespace):
 
         return self.server.not_handled
 
-    async def _handle_event[**P, T](
+    async def _handle_event(
         self,
         data: dict[str, Any],
         event: str,
         namespace: str | None,
         sid: str | None,
         environ: dict[str, Any] | None = None,
-        handler: Callable[P, T] | None = None,
+        handler: Callable[..., Any] | None = None,
     ) -> Any:
 
         if not handler:
@@ -126,8 +128,7 @@ class Namespace(BaseNamespace):
         )
         async with app.request_context(request_ctx_sio):
             if not self.socketio.config["manage_session"]:
-                nmspace = str(getattr(request, "namespace", None))
-                await self.socketio.handle_session(nmspace)
+                await self.socketio.handle_session(environ or {})
 
             try:
                 if iscoroutinefunction(handler):
@@ -220,8 +221,8 @@ class Namespace(BaseNamespace):
             namespace=self.namespace,
         )
 
-    def get_handler[**P](self, event: str) -> Callable[P, None]:
+    def get_handler(self, event: str) -> Callable[..., Any] | None:
         return cast(
-            "Callable[P, None]",
+            "Callable[..., Any] | None",
             getattr(self, "on_" + (event or ""), None),
         )

@@ -21,10 +21,21 @@ dependencies = [
     "clear>=2.0.0",
 ]
 
+[dependency-groups]
+dev = [
+    "build>=1.2.2",
+    "pyright>=1.1.391",
+    "pytest>=8.3.4",
+    "pytest-asyncio>=0.25.0",
+    "pytest-cov>=6.0.0",
+    "ruff>=0.8.4",
+    "sphinx>=8.1.3",
+]
+
 
 [project.urls]
-Homepage = "https://github.com/Robotz213/Quart-SocketIO"
-"Bug Tracker" = "https://github.com/Robotz213/Quart-SocketIO/issues"
+Homepage = "https://github.com/Robotz213/PulseIo"
+"Bug Tracker" = "https://github.com/Robotz213/PulseIo/issues"
 
 [project.readme]
 file = "README.md"
@@ -56,7 +67,17 @@ select = ["ALL"]
 # Allow unused variables when underscore-prefixed.
 dummy-variable-rgx = "^(_+|(_+[a-zA-Z0-9_]*[a-zA-Z0-9]+?))$"
 
-ignore = ["CPY", "PLC2701", "PLC", "DOC", "D102", "PLR", "ARG", "PD"]
+ignore = [
+    "ANN401",
+    "CPY",
+    "PLC2701",
+    "PLC",
+    "DOC",
+    "D102",
+    "PLR",
+    "ARG",
+    "PD",
+]
 
 
 [tool.ruff.format]

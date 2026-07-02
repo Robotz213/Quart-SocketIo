@@ -1,4 +1,4 @@
-# Quart-SocketIO
+# pulseio
 
 Socket.IO integration for Quart applications.
 
@@ -8,11 +8,15 @@ Socket.IO integration for Quart applications.
 
 You can install this package using pip:
 
-    pip install git+https://github.com/Robotz213/Quart-SocketIO.git
+    pip install git+https://github.com/Robotz213/PulseIo.git
 
-> If you are using Poetry, add the package to your project with:
+For local development, use `uv`:
 
-    poetry add git+https://github.com/Robotz213/Quart-SocketIO.git
+    uv sync --all-extras --dev
+    uv run ruff format .
+    uv run ruff check .
+    uv run pyright
+    uv run pytest
 
 ## Example
 
@@ -21,24 +25,26 @@ from quart import Quart, render_template
 from pulseio import SocketIO, emit
 
 app = Quart(__name__)
-app.config['SECRET_KEY'] = 'secret!'
+app.config["SECRET_KEY"] = "secret!"
 socketio = SocketIO(app)
 
-@app.route('/')
+
+@app.route("/")
 async def index():
-    return await render_template('index.html')
+    return await render_template("index.html")
+
 
 @socketio.event
 async def my_event(message):
-    await emit('my response', {'data': 'got it!'})
+    await emit("my response", {"data": "got it!"})
 
-if __name__ == '__main__':
+
+if __name__ == "__main__":
     socketio.run(app)
 ```
 
 ## Resources
 
 - [Quart Documentation](https://quart.palletsprojects.com/en/latest/)
-- [Flask-SocketIO Documentation](https://flask-socketio.readthedocs.io/en/latest/)
+- [python-socketio Documentation](https://python-socketio.readthedocs.io/)
 - [PyPI (unavailable)](#)
-- Questions? See [existing questions](https://stackoverflow.com/questions/tagged/flask-socketio) on Stack Overflow, or [ask your own](https://stackoverflow.com/questions/ask?tags=python+flask-socketio+python-socketio).

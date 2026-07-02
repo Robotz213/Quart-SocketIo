@@ -5,6 +5,7 @@ from ._utils import (
     emit,
     join_room,
     leave_room,
+    rooms,
     send,
 )
 from .config import Config
@@ -21,5 +22,6 @@ __all__ = [
     "emit",
     "join_room",
     "leave_room",
+    "rooms",
     "send",
 ]
