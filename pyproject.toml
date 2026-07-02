@@ -109,3 +109,13 @@ docstring-code-line-length = 79
 [tool.pyright]
 typeCheckingMode = "basic"
 reportArgumentType = "none"
+
+[tool.pytest.ini_options]
+addopts = "--cov=quart_socketio --cov-report=term-missing --cov-fail-under=75"
+
+[tool.coverage.run]
+source = ["quart_socketio"]
+omit = ["quart_socketio/_types/*"]
+
+[tool.coverage.report]
+fail_under = 75

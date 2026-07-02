@@ -40,7 +40,7 @@ quart_socketio/
   namespace.py         # Namespace based on socketio.AsyncNamespace
   middleware.py        # ASGI middleware and proxy headers
   middleare.py         # compatibility shim
-  _utils.py            # global context helpers
+  utils.py            # global context helpers
   _uvicorn.py          # Uvicorn runner wrapper
   common/exceptions.py # custom exceptions
   _types/              # internal types

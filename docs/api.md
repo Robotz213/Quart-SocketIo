@@ -12,7 +12,7 @@ This page is generated from the code and docstrings with `mkdocstrings`.
 
 ## Context helpers
 
-::: quart_socketio.\_utils
+::: quart_socketio.utils
 
 ## Namespace
 
