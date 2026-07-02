@@ -17,6 +17,7 @@ For local development, use `uv`:
     uv run ruff check .
     uv run pyright
     uv run pytest
+    uv run mkdocs serve
 
 ## Example
 

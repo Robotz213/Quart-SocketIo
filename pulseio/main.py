@@ -424,13 +424,12 @@ class SocketIO(Controller):
 
             socketio.on_event("my event", on_foo_event, namespace="/chat")
 
-        :param message: The name of the event. This is normally a user defined
-                        string, but a few event names are already defined. Use
-                        ``'message'`` to define a handler that takes a string
-                        payload, ``'json'`` to define a handler that takes a
-                        JSON blob payload, ``'connect'`` or ``'disconnect'``
-                        to create handlers for connection and disconnection
-                        events.
+        :param event: The name of the event. This is normally a user defined
+                      string, but a few event names are already defined. Use
+                      ``'message'`` to define a handler that takes a string
+                      payload, ``'json'`` to define a handler that takes a JSON
+                      blob payload, ``'connect'`` or ``'disconnect'`` to create
+                      handlers for connection and disconnection events.
         :param handler: The function that handles the event.
         :param namespace: The namespace on which the handler is to be
                           registered. Defaults to the global namespace.
@@ -444,6 +443,7 @@ class SocketIO(Controller):
         *args: Any,
         to: Any | None = None,
         room: Any | None = None,
+        include_self: bool = True,
         skip_sid: Any | None = None,
         namespace: Any | None = None,
         callback: Callable[..., Any] | None = None,
@@ -484,8 +484,6 @@ class SocketIO(Controller):
                          those provided by the client. Callback functions can
                          only be used when addressing an individual client.
         """
-        include_self = kwargs.pop("include_self", True)
-        skip_sid = kwargs.pop("skip_sid", None)
         if not include_self and not skip_sid:
             skip_sid = request.sid
 
@@ -522,7 +520,17 @@ class SocketIO(Controller):
             ignore_queue=ignore_queue,
         )
 
-    async def call(self, event: str, *args: Any, **kwargs: Any) -> Any:
+    async def call(
+        self,
+        event: str,
+        *args: Any,
+        namespace: str = "/",
+        to: Any | None = None,
+        room: Any | None = None,
+        timeout: int = 60,  # noqa: ASYNC109
+        ignore_queue: bool = False,
+        **kwargs: Any,
+    ) -> Any:
         """Emit a SocketIO event and wait for the response.
 
         This method issues an emit with a callback and waits for the callback
@@ -552,13 +560,14 @@ class SocketIO(Controller):
                              leave this parameter with its default value of
                              ``False``.
         """  # noqa: RUF002
-        namespace = kwargs.pop("namespace", "/")
-        to = kwargs.pop("to", None) or kwargs.pop("room", None)
+        to = to or room
         return await self.server.call(
             event,
             *args,
             namespace=namespace,
             to=to,
+            timeout=timeout,
+            ignore_queue=ignore_queue,
             **kwargs,
         )
 

@@ -115,7 +115,8 @@ class Controller:
         self,
         **kwargs: Kw,
     ) -> None:
-        app: Quart = kwargs.get("app")  # pyright: ignore[reportAssignmentType]
+        kwargs = dict(kwargs)
+        app: Quart = kwargs.pop("app", None)  # pyright: ignore[reportAssignmentType]
         self.config = Config(app=app, **kwargs)
         self.server_options = self.config
         if app is not None or self.config.get("message_queue"):

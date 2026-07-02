@@ -9,7 +9,19 @@ if TYPE_CHECKING:
     from pulseio import SocketIO
 
 
-async def emit(event: str, *args: Any, **kwargs: Any) -> None:
+async def emit(
+    event: str,
+    *args: Any,
+    namespace: str | None = None,
+    callback: Any | None = None,
+    broadcast: bool = False,
+    to: Any | None = None,
+    room: Any | None = None,
+    include_self: bool = True,
+    skip_sid: Any | None = None,
+    ignore_queue: bool = False,
+    **kwargs: Any,
+) -> None:
     """Emit a SocketIO event.
 
     This function emits a SocketIO event to one or more connected clients. A
@@ -51,15 +63,10 @@ async def emit(event: str, *args: Any, **kwargs: Any) -> None:
                          single addressee. It is recommended to always leave
                          this parameter with its default value of ``False``.
     """
-    namespace = kwargs.get("namespace", request.namespace)
-    callback = kwargs.get("callback")
-    broadcast = kwargs.get("broadcast")
-    to = kwargs.pop("to", None) or kwargs.pop("room", None)
+    namespace = namespace if namespace is not None else request.namespace
+    to = to or room
     if to is None and not broadcast:
         to = request.sid
-    include_self = kwargs.get("include_self", True)
-    skip_sid = kwargs.get("skip_sid")
-    ignore_queue = kwargs.get("ignore_queue", False)
 
     socketio: SocketIO = current_app.extensions["socketio"]
     return await socketio.emit(
@@ -74,7 +81,16 @@ async def emit(event: str, *args: Any, **kwargs: Any) -> None:
     )
 
 
-async def call(event: str, *args: Any, **kwargs: Any) -> Any:
+async def call(
+    event: str,
+    *args: Any,
+    namespace: str | None = None,
+    to: Any | None = None,
+    room: Any | None = None,
+    timeout: int = 60,  # noqa: ASYNC109
+    ignore_queue: bool = False,
+    **kwargs: Any,
+) -> Any:
     """Emit a SocketIO event and wait for the response.
 
     This function issues an emit with a callback and waits for the callback to
@@ -105,12 +121,10 @@ async def call(event: str, *args: Any, **kwargs: Any) -> Any:
                          single addressee. It is recommended to always leave
                          this parameter with its default value of ``False``.
     """  # noqa: RUF002
-    namespace = kwargs.get("namespace", request.namespace)
-    to = kwargs.pop("to", None) or kwargs.pop("room", None)
+    namespace = namespace if namespace is not None else request.namespace
+    to = to or room
     if to is None:
         to = request.sid
-    timeout = kwargs.get("timeout", 60)
-    ignore_queue = kwargs.get("ignore_queue", False)
 
     socketio: SocketIO = current_app.extensions["socketio"]
     return await socketio.call(
@@ -123,7 +137,20 @@ async def call(event: str, *args: Any, **kwargs: Any) -> Any:
     )
 
 
-async def send(message: Any, **kwargs: Any) -> None:
+async def send(
+    message: Any,
+    *,
+    json: bool = False,
+    namespace: str | None = None,
+    callback: Any | None = None,
+    broadcast: bool = False,
+    to: Any | None = None,
+    room: Any | None = None,
+    include_self: bool = True,
+    skip_sid: Any | None = None,
+    ignore_queue: bool = False,
+    **kwargs: Any,
+) -> None:
     """Send a SocketIO message.
 
     This function sends a simple SocketIO message to one or more connected
@@ -162,16 +189,10 @@ async def send(message: Any, **kwargs: Any) -> None:
                          único destinatário. É recomendável deixar sempre este
                          parâmetro com seu valor padrão ``False``.
     """
-    json = kwargs.get("json", False)
-    namespace = kwargs.get("namespace", request.namespace)
-    callback = kwargs.get("callback")
-    broadcast = kwargs.get("broadcast")
-    to = kwargs.pop("to", None) or kwargs.pop("room", None)
+    namespace = namespace if namespace is not None else request.namespace
+    to = to or room
     if to is None and not broadcast:
         to = request.sid
-    include_self = kwargs.get("include_self", True)
-    skip_sid = kwargs.get("skip_sid")
-    ignore_queue = kwargs.get("ignore_queue", False)
 
     socketio: SocketIO = current_app.extensions["socketio"]
     return await socketio.send(

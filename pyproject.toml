@@ -24,12 +24,14 @@ dependencies = [
 [dependency-groups]
 dev = [
     "build>=1.2.2",
+    "mkdocs>=1.6.1",
+    "mkdocs-material>=9.6.15",
+    "mkdocstrings[python]>=0.29.1",
     "pyright>=1.1.391",
     "pytest>=8.3.4",
     "pytest-asyncio>=0.25.0",
     "pytest-cov>=6.0.0",
     "ruff>=0.8.4",
-    "sphinx>=8.1.3",
 ]
 
 

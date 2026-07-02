@@ -1,5 +1,6 @@
 include README.md LICENSE
 recursive-include docs *
 recursive-exclude docs/_build *
+recursive-exclude site *
 recursive-include tests *
 exclude **/*.pyc
