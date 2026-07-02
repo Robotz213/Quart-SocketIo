@@ -49,6 +49,10 @@ content-type = "text/markdown"
 zip-safe = false
 include-package-data = true
 
+[tool.setuptools.packages.find]
+include = ["pulseio*"]
+exclude = ["docs*", "tests*", "site*"]
+
 
 [build-system]
 requires = ["setuptools>=61.2"]

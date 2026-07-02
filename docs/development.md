@@ -1,8 +1,8 @@
-# Desenvolvimento
+# Development
 
-## Qualidade
+## Quality
 
-Comandos recomendados:
+Recommended commands:
 
 ```bash
 uv run ruff format .
@@ -11,52 +11,53 @@ uv run pyright
 uv run pytest
 ```
 
-## Documentacao
+## Documentation
 
-A documentacao usa MkDocs com Material e mkdocstrings.
+The documentation uses MkDocs with Material, static i18n, and mkdocstrings.
 
-Para servir localmente:
+To serve it locally:
 
 ```bash
 uv run mkdocs serve
 ```
 
-Para gerar o site estatico:
+To generate the static site:
 
 ```bash
 uv run mkdocs build --strict
 ```
 
-O resultado fica em `site/`.
+The output is written to `site/`.
 
-## Estrutura relevante
+## Relevant structure
 
 ```text
 pulseio/
-  __init__.py          # exports publicos
-  main.py              # SocketIO e decorators de eventos
-  core.py              # Controller, init_app, run, contexto Quart
-  config.py            # defaults de configuracao
-  namespace.py         # Namespace baseado em socketio.AsyncNamespace
-  middleware.py        # middleware ASGI e headers de proxy
-  middleare.py         # shim de compatibilidade
-  _utils.py            # helpers globais de contexto
-  _uvicorn.py          # wrapper de runner Uvicorn
-  common/exceptions.py # excecoes customizadas
-  _types/              # tipos internos
+  __init__.py          # public exports
+  main.py              # SocketIO and event decorators
+  core.py              # Controller, init_app, run, Quart context
+  config.py            # configuration defaults
+  namespace.py         # Namespace based on socketio.AsyncNamespace
+  middleware.py        # ASGI middleware and proxy headers
+  middleare.py         # compatibility shim
+  _utils.py            # global context helpers
+  _uvicorn.py          # Uvicorn runner wrapper
+  common/exceptions.py # custom exceptions
+  _types/              # internal types
 ```
 
-## Testes existentes
+## Existing tests
 
-Os testes atuais cobrem:
+The current tests cover:
 
-- isolamento de defaults mutaveis de `Config`;
-- isolamento de `SocketIO.environments`;
-- excecoes customizadas e helpers de raise;
-- shim `pulseio.middleare`;
-- selecao de headers confiaveis por hop.
+- isolation of mutable `Config` defaults;
+- isolation of `SocketIO.environments`;
+- custom exceptions and raise helpers;
+- the `pulseio.middleare` shim;
+- trusted header selection by hop;
+- `SocketIO` handler registration, dispatching, namespaces, and delegation.
 
-## Checklist antes de publicar
+## Checklist before publishing
 
 ```bash
 uv run ruff format --check .

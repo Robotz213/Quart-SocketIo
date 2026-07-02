@@ -1,8 +1,8 @@
-# Public API
+# API pública
 
-This page is generated from the code and docstrings with `mkdocstrings`.
+Esta página é gerada a partir do código e dos docstrings via `mkdocstrings`.
 
-## Main package
+## Pacote principal
 
 ::: pulseio
 
@@ -10,7 +10,7 @@ This page is generated from the code and docstrings with `mkdocstrings`.
 
 ::: pulseio.main.SocketIO
 
-## Context helpers
+## Helpers de contexto
 
 ::: pulseio._utils
 
@@ -26,6 +26,6 @@ This page is generated from the code and docstrings with `mkdocstrings`.
 
 ::: pulseio.middleware
 
-## Exceptions
+## Exceções
 
 ::: pulseio.common.exceptions

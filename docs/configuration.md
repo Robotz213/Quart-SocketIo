@@ -1,35 +1,35 @@
-# Configuracao
+# Configuration
 
-`pulseio.Config` e um `UserDict` inicializado com uma copia profunda dos
-defaults. Isso evita que listas e dicionarios mutaveis sejam compartilhados
-entre instancias.
+`pulseio.Config` is a `UserDict` initialized with a deep copy of the defaults.
+This prevents mutable lists and dictionaries from being shared across
+instances.
 
-## Defaults principais
+## Main defaults
 
-| Opcao | Default | Descricao |
+| Option | Default | Description |
 | --- | --- | --- |
-| `app` | `None` | Aplicacao Quart associada. |
-| `host` | `localhost` | Host usado por `socketio.run()`. |
-| `port` | `5000` | Porta usada por `socketio.run()`. |
-| `debug` | `False` | Define `app.debug`. |
-| `use_reloader` | `False` | Opcao preservada para reloader. |
-| `launch_mode` | `uvicorn` | Modo declarado de servidor. |
-| `manage_session` | `True` | Controla como sessoes Quart sao tratadas nos eventos. |
-| `logger` | `False` | Logger do python-socketio. |
-| `engineio_logger` | `False` | Logger do engine.io. |
-| `socketio_path` | `/socket.io` | Caminho do endpoint Socket.IO. |
-| `engineio_path` | `/engine.io` | Caminho declarado do Engine.IO. |
-| `async_mode` | `asgi` | Modo async repassado ao python-socketio. |
-| `cors_allowed_origins` | `*` | Origens CORS aceitas. |
-| `cors_credentials` | `True` | Permite credenciais em CORS. |
-| `transports` | `["polling", "websocket"]` | Transportes habilitados. |
-| `message_queue` | `None` | URL de fila para multiplos processos. |
-| `channel` | `quart-socketio` | Canal da fila. |
+| `app` | `None` | Associated Quart application. |
+| `host` | `localhost` | Host used by `socketio.run()`. |
+| `port` | `5000` | Port used by `socketio.run()`. |
+| `debug` | `False` | Sets `app.debug`. |
+| `use_reloader` | `False` | Preserved reloader option. |
+| `launch_mode` | `uvicorn` | Declared server mode. |
+| `manage_session` | `True` | Controls how Quart sessions are handled during events. |
+| `logger` | `False` | python-socketio logger. |
+| `engineio_logger` | `False` | Engine.IO logger. |
+| `socketio_path` | `/socket.io` | Socket.IO endpoint path. |
+| `engineio_path` | `/engine.io` | Declared Engine.IO path. |
+| `async_mode` | `asgi` | Async mode passed to python-socketio. |
+| `cors_allowed_origins` | `*` | Accepted CORS origins. |
+| `cors_credentials` | `True` | Allows credentials in CORS. |
+| `transports` | `["polling", "websocket"]` | Enabled transports. |
+| `message_queue` | `None` | Queue URL for multiple processes. |
+| `channel` | `quart-socketio` | Queue channel. |
 
-## Opcoes do Socket.IO
+## Socket.IO options
 
-A maior parte das opcoes em `Config` e repassada para
-`socketio.AsyncServer(**config)`, incluindo:
+Most options in `Config` are passed to `socketio.AsyncServer(**config)`,
+including:
 
 - `client_manager`
 - `json`
@@ -45,17 +45,17 @@ A maior parte das opcoes em `Config` e repassada para
 - `cookie`
 - `monitor_clients`
 
-## Filas e multiplos processos
+## Queues and multiple processes
 
-Quando `message_queue` e configurado, o projeto escolhe um manager conforme o
-prefixo da URL:
+When `message_queue` is configured, the project selects a manager based on the
+URL prefix:
 
-| Prefixo | Manager |
+| Prefix | Manager |
 | --- | --- |
 | `redis://`, `rediss://` | `socketio.AsyncRedisManager` |
 | `kafka://` | `socketio.KafkaManager` |
 | `zmq` | `socketio.ZmqManager` |
-| outros | `socketio.KombuManager` |
+| Other prefixes | `socketio.KombuManager` |
 
 ```python
 socketio = SocketIO(
@@ -65,8 +65,8 @@ socketio = SocketIO(
 )
 ```
 
-## Sessoes
+## Sessions
 
-Com `manage_session=True`, PulseIo cria uma sessao gerenciada para eventos
-Socket.IO. Com `manage_session=False`, o codigo tenta usar o objeto de sessao
-gerenciado pelo Quart.
+With `manage_session=True`, PulseIo creates a managed session for Socket.IO
+events. With `manage_session=False`, the code tries to use the session object
+managed by Quart.

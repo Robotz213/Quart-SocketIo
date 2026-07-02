@@ -1,52 +1,52 @@
-# Deploy e proxies
+# Deployment and proxies
 
-## Runner Uvicorn
+## Uvicorn runner
 
-`socketio.run(app)` usa `pulseio._uvicorn.run_uvicorn()` internamente.
+`socketio.run(app)` uses `pulseio._uvicorn.run_uvicorn()` internally.
 
 ```python
 socketio.run(app, host="0.0.0.0", port=8000, log_level="info")
 ```
 
-O wrapper cria uma configuracao Uvicorn com:
+The wrapper creates a Uvicorn configuration with:
 
 - `interface="asgi3"`
 - `ws="websockets"`
-- `loop="asyncio"` no Windows
-- `loop="uvloop"` em outros sistemas
+- `loop="asyncio"` on Windows
+- `loop="uvloop"` on other systems
 
-## Middleware ASGI
+## ASGI middleware
 
-Durante `init_app()`, PulseIo:
+During `init_app()`, PulseIo:
 
-1. Cria um `socketio.AsyncServer`.
-2. Registra handlers e namespaces.
-3. Envolve `app.asgi_app` com `ProxyHeadersMiddleware`.
-4. Instala `QuartSocketIOMiddleware` como `app.asgi_app`.
-5. Salva a extensao em `app.extensions["socketio"]`.
+1. Creates a `socketio.AsyncServer`.
+2. Registers handlers and namespaces.
+3. Wraps `app.asgi_app` with `ProxyHeadersMiddleware`.
+4. Installs `QuartSocketIOMiddleware` as `app.asgi_app`.
+5. Stores the extension in `app.extensions["socketio"]`.
 
-## Headers de proxy
+## Proxy headers
 
-`QuartSocketIOMiddleware` ajusta `scope["client"]`, `scope["scheme"]` e o
-header `host` quando recebe headers de proxy confiaveis.
+`QuartSocketIOMiddleware` adjusts `scope["client"]`, `scope["scheme"]`, and the
+`host` header when it receives trusted proxy headers.
 
-Configuracoes lidas do `app.config`:
+Configuration values read from `app.config`:
 
-| Chave | Default | Descricao |
+| Key | Default | Description |
 | --- | --- | --- |
-| `SOCKETIO_MODE` | `modern` | Usa `Forwarded` quando disponivel. |
-| `SOCKETIO_TRUSTED_HOPS` | `1` | Quantos hops da direita confiar. |
+| `SOCKETIO_MODE` | `modern` | Uses `Forwarded` when available. |
+| `SOCKETIO_TRUSTED_HOPS` | `1` | Number of hops from the right to trust. |
 
-No modo `modern`, o middleware entende o header `Forwarded`:
+In `modern` mode, the middleware understands the `Forwarded` header:
 
 ```text
 Forwarded: for=203.0.113.10;proto=https;host=example.com
 ```
 
-Quando `Forwarded` nao esta disponivel, usa:
+When `Forwarded` is not available, it uses:
 
 - `X-Forwarded-For`
 - `X-Forwarded-Proto`
 - `X-Forwarded-Host`
 
-Use `SOCKETIO_TRUSTED_HOPS=0` para ignorar esses headers.
+Use `SOCKETIO_TRUSTED_HOPS=0` to ignore these headers.
