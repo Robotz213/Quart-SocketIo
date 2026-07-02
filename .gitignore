@@ -20,8 +20,9 @@ __pycache__
 dif_commit.txt
 # Installer logs
 pip-log.txt
-
+.github/copilot-commit-message-instructions.md
 # Unit test / coverage reports
+commit-messages
 .coverage
 .tox
 nosetests.xml
