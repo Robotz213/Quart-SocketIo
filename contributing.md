@@ -180,21 +180,12 @@ For bug fixes, include a regression test when possible.
 
 Documentation lives in `docs/` and is built with MkDocs.
 
-Documentation contributions are welcome. You can help by fixing typos,
-improving explanations, adding examples, updating outdated instructions, or
-expanding the English and Brazilian Portuguese pages.
-
 Update the documentation when you change:
 
 - Public API behavior.
 - Configuration options.
 - Installation or development instructions.
 - Event, namespace, room, or deployment behavior.
-
-When adding or changing documentation, keep the English page and the matching
-`pt-BR` page aligned whenever both versions exist. For example, changes to
-`docs/configuration.md` should also be reflected in
-`docs/configuration.pt-BR.md`.
 
 Run the documentation build before submitting documentation changes:
 
