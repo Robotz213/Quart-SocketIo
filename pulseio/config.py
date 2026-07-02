@@ -1,8 +1,12 @@
+from __future__ import annotations
+
 from collections import UserDict
+from typing import TYPE_CHECKING
 
 from pulseio.typing._config import wrap_config
 
-type Any = object
+if TYPE_CHECKING:
+    from pulseio._types import Any
 
 
 @wrap_config

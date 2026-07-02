@@ -1,281 +1,357 @@
 # Roadmap de correcoes e melhorias
 
-Este roadmap foi criado a partir da leitura do projeto `pulseio` e das regras
-definidas em `pyproject.toml`: Python `>=3.13`, Ruff com `select = ["ALL"]`,
-linha maxima de 79 caracteres, formatacao com aspas duplas e Pyright em modo
-`basic`.
+Este roadmap foi criado em 2026-07-02 a partir da leitura do projeto
+`pulseio` e das regras declaradas em `pyproject.toml`.
 
-## Estado atual observado
+Regras que guiam este plano:
 
-- O pacote implementa uma integracao assincrona entre Quart e Socket.IO, mas
-  ainda carrega nomes, docs e CI herdados de `Quart-SocketIO`/Flask-SocketIO.
-- O projeto nao possui suite de testes no checkout atual.
-- `ruff` e `pyright` estao configurados, mas nao aparecem como dependencias de
-  desenvolvimento no `pyproject.toml`.
-- O CI em `.github/workflows/tests.yml` usa `tox -eflake8`, mas nao ha
-  `tox.ini`, `.flake8` ou `setup.cfg` no repositorio.
-- O CI testa Python 3.8-3.12 e PyPy, enquanto `pyproject.toml` exige Python
-  `>=3.13`.
-- `.python-version` aponta para `3.14`, compativel com `>=3.13`, mas diferente
-  da maior parte do lock e do CI esperado.
-- Os arquivos `poetry.toml` e `poetry.lock` citados no IDE nao existem neste
-  checkout; o projeto parece estar usando `uv.lock`.
+- Python suportado: `>=3.13`.
+- Ruff: `select = ["ALL"]`, `preview = true`, linha maxima de 79 caracteres,
+  indentacao de 4 espacos e aspas duplas.
+- Ruff format: `quote-style = "double"`, `indent-style = "space"` e formatacao
+  de exemplos em docstrings.
+- Pyright: `typeCheckingMode = "basic"` com `reportArgumentType = "none"`.
+- O projeto usa `uv.lock`; o CI atual ainda usa `tox`.
 
-## Resultado das ferramentas
+## Estado atual
+
+`pulseio` e uma biblioteca de integracao assincrona entre Quart e
+python-socketio. O codigo ainda carrega partes herdadas de Quart-SocketIO e
+Flask-SocketIO, com nomes antigos em README, URLs, templates de issue,
+docstrings e configuracoes internas.
 
 Comandos executados:
 
 ```bash
-uvx ruff check .
-uvx pyright
+uv run ruff check .
+uv run pyright
+uv run pytest
 ```
 
-Resultado resumido:
+Resultados:
 
-- Ruff encontrou 29 erros. Os principais estao em `docs/conf.py` e
-  `pulseio/common/exceptions.py`, incluindo linhas longas, codigo comentado,
-  `noqa` sem efeito e declaracao de encoding desnecessaria.
-- Pyright reportou 62 erros e 3 avisos. Parte dos erros veio do ambiente do
-  `uvx` nao resolver dependencias instaladas do projeto, mas ha problemas reais
-  de tipagem, assinatura, retorno e imports.
+- `ruff check` falha com 12 erros, todos em
+  `pulseio/common/exceptions.py`, por `noqa` sem efeito.
+- `pyright` falha com 54 erros e 3 avisos.
+- `pytest` executa, mas coleta 0 testes.
+- O workflow `.github/workflows/tests.yml` usa Python 3.8 a 3.12 e PyPy,
+  embora o pacote declare `requires-python = ">=3.13"`.
+- O CI chama `tox -eflake8`, `tox -edocs` e `tox`, mas nao ha `tox.ini` no
+  checkout atual.
+- `tests/` existe apenas com `__pycache__`.
+- Ha um arquivo com typo publico: `pulseio/middleare.py`.
+- Ha um atributo publico com typo: `SocketIO.enviroments`.
 
-## Fase 1 - Alinhar tooling e CI
+## Fase 1 - Restaurar base de qualidade
 
-Prioridade: alta.
+Prioridade: critica.
 
-- Adicionar grupos de dependencias de desenvolvimento no `pyproject.toml`, por
-  exemplo `ruff`, `pyright`, `pytest`, `pytest-asyncio`, `sphinx` e ferramentas
-  de cobertura.
-- Definir comandos oficiais no README ou em um task runner simples:
-  `uv run ruff format .`, `uv run ruff check .`, `uv run pyright` e
-  `uv run pytest`.
-- Atualizar o workflow GitHub Actions para Python 3.13 e 3.14, removendo a
-  matriz antiga de 3.8-3.12 se o pacote realmente requer `>=3.13`.
-- Substituir `tox -eflake8` por Ruff/Pyright ou adicionar um `tox.ini` real se
-  a manutencao com tox for desejada.
-- Decidir uma unica ferramenta de lock/ambiente: `uv` ou Poetry. Se for `uv`,
-  remover referencias operacionais a Poetry; se for Poetry, restaurar
-  `poetry.toml` e `poetry.lock`.
+Objetivo: fazer as ferramentas oficiais do projeto medirem o estado real sem
+depender de configuracao ausente.
 
-Criterio de aceite:
+- Adicionar dependencias de desenvolvimento no `pyproject.toml`, por exemplo
+  `ruff`, `pyright`, `pytest`, `pytest-asyncio`, `pytest-cov` e `build`.
+- Definir comandos oficiais para manutencao:
+  - `uv run ruff format .`
+  - `uv run ruff check .`
+  - `uv run pyright`
+  - `uv run pytest`
+  - `uv run python -m build`
+- Atualizar `.github/workflows/tests.yml` para instalar com `uv` e rodar os
+  mesmos comandos locais.
+- Trocar a matriz antiga de Python 3.8-3.12 por Python 3.13 e 3.14.
+- Remover `tox` do CI ou adicionar um `tox.ini` real, se o projeto quiser
+  manter tox como camada de orquestracao.
+- Decidir se `.python-version` deve ficar em 3.14 ou se o ambiente local
+  principal deve usar 3.13 para validar a versao minima.
 
-- `uv sync --all-extras --dev` prepara um ambiente completo.
-- CI executa lint, type check, docs e testes usando a mesma versao minima de
-  Python declarada no pacote.
+Criterios de aceite:
 
-## Fase 2 - Corrigir erros que quebram contrato publico
+- `uv sync --dev` prepara um ambiente completo.
+- CI e ambiente local executam os mesmos comandos.
+- O CI nao tenta testar versoes incompativeis com `requires-python`.
 
-Prioridade: alta.
+## Fase 2 - Corrigir excecoes publicas
 
-- Corrigir `pulseio/common/exceptions.py`:
-  - `QuartTypeError`, `QuartValueError`, `QuartRuntimeError` e
-    `QuartSocketioError` devem preservar a mensagem/exception recebida.
-  - `raise_runtime_error` deve levantar `QuartRuntimeError`.
-  - `raise_value_error` deve levantar `QuartValueError`.
-  - `raise_type_error` deve continuar levantando `QuartTypeError`.
-- Remover aliases invalidos ou perigosos como `type Any = any` e
-  `type Any = object`; usar `typing.Any` onde o contrato exige valor dinamico.
-- Corrigir `pulseio/namespace.py`, que importa
-  `SocketIOConnectionRefusedError` de `pulseio.main`, mas esse simbolo nao e
-  exportado por `main.py`. Preferir importar diretamente de
-  `socketio.exceptions`, como ja ocorre em `pulseio/main.py`.
-- Corrigir o typo `enviroments` para `environments`, mantendo compatibilidade
-  temporaria se isso ja for usado externamente.
-- Corrigir o typo do arquivo `pulseio/middleare.py` para
-  `pulseio/middleware.py`, com shim de compatibilidade se necessario.
+Prioridade: critica.
 
-Criterio de aceite:
+Problemas observados:
 
-- Excecoes carregam mensagens corretas.
-- Imports publicos funcionam sem depender de efeitos colaterais.
-- Alteracoes incompativeis sao documentadas ou protegidas por aliases
-  temporarios.
+- `QuartTypeError`, `QuartValueError`, `QuartRuntimeError` e
+  `QuartSocketioError` recebem mensagem ou exception, mas chamam
+  `super().__init__(*args)` e descartam o valor principal.
+- `raise_runtime_error` levanta `QuartTypeError`, nao `QuartRuntimeError`.
+- `raise_value_error` levanta `QuartTypeError`, nao `QuartValueError`.
+- `type Any = any` usa o builtin `any`, que o Pyright interpreta como funcao,
+  gerando erro.
+- Os `noqa` em `exceptions.py` ignoram regras desativadas globalmente e por
+  isso quebram Ruff.
 
-## Fase 3 - Eliminar estado compartilhado acidental
+Acoes:
 
-Prioridade: alta.
+- Substituir `type Any = any` por `from typing import Any`.
+- Fazer as classes preservarem a mensagem recebida.
+- Fazer `QuartSocketioError` preservar a exception original.
+- Corrigir `raise_runtime_error`, `raise_value_error` e `raise_type_error`.
+- Remover os `noqa` desnecessarios.
+- Adicionar testes unitarios para mensagens e tipos levantados.
 
-- Revisar `pulseio/config.py`: `DEFAULTS` usa listas e dicts mutaveis
-  compartilhados, como `handlers`, `extra_files`, `reloader_options`,
-  `server_options`, `namespace_handlers` e `exception_handlers`.
-- Garantir que cada `Config()` receba copias novas dos defaults.
-- Avaliar trocar `UserDict` por um modelo tipado mais explicito ou uma factory
-  de defaults.
-- Revisar atributos de classe em `Controller`, como `shutdown_event`, `server`,
-  `config` e `sockio_mw`, para evitar compartilhamento entre instancias.
-- Revisar `SocketIO.enviroments`, hoje `ClassVar`, porque ambientes por `sid`
-  podem vazar entre instancias de `SocketIO`.
+Criterios de aceite:
 
-Criterio de aceite:
+- `uv run ruff check .` passa.
+- `raise_runtime_error("x")` levanta `QuartRuntimeError("x")`.
+- `raise_value_error("x")` levanta `QuartValueError("x")`.
+- Excecoes customizadas exibem mensagens uteis em tracebacks.
 
-- Duas instancias independentes de `SocketIO` nao compartilham handlers,
-  namespaces, excecoes, sessoes ou ambientes.
-
-## Fase 4 - Corrigir fluxo de eventos e sessoes
+## Fase 3 - Isolar estado mutavel
 
 Prioridade: alta.
 
-- Revisar `_trigger_event`, `_handle_event` e `_update_kwargs` em
-  `pulseio/main.py`; a montagem manual de `sid`, `event`, `namespace` e `data`
-  por posicao em `args` e fragil.
-- Corrigir chamadas suspeitas de `handle_session`: em alguns pontos o metodo
-  espera `environ`, mas recebe `request.namespace` ou string similar.
-- Corrigir `self.config["app"].error(err)`, pois `Quart` usa logger e handlers
-  de erro, nao um metodo generico `.error`.
-- Revisar callbacks em `emit`; a chamada para `_handle_event` parece usar ordem
-  posicional incompativel com a assinatura atual.
-- Decidir se exceptions em handlers devem ser retornadas como string ou
-  repassadas para handlers configurados em `on_error`/`on_error_default`.
-- Garantir que eventos `connect`, `disconnect`, eventos customizados e
-  namespaces de classe tenham comportamento identico ao esperado em
-  python-socketio.
+Problemas observados:
 
-Criterio de aceite:
+- `Config.__init__` usa `super().__init__(DEFAULTS)`, compartilhando listas e
+  dicts mutaveis de `DEFAULTS`.
+- Defaults mutaveis incluem `handlers`, `extra_files`, `reloader_options`,
+  `server_options`, `namespace_handlers`, `exception_handlers` e
+  `transports`.
+- `Controller` define `server`, `shutdown_event`, `config` e `sockio_mw` como
+  atributos de classe.
+- `SocketIO.enviroments` e `ClassVar`, entao ambientes por `sid` podem vazar
+  entre instancias.
 
-- Testes cobrem `connect`, `disconnect`, `emit`, `send`, `call`, rooms,
-  namespace default e namespace customizado.
-- Erros de handlers acionam o mecanismo de erro documentado.
+Acoes:
 
-## Fase 5 - Tipagem e API publica
+- Criar uma factory de defaults ou usar `copy.deepcopy(DEFAULTS)` em
+  `Config.__init__`.
+- Mover estado de runtime para atributos de instancia em `Controller`.
+- Renomear `enviroments` para `environments`, mantendo alias temporario se a
+  API publica ja tiver consumidores.
+- Adicionar testes provando que duas instancias de `SocketIO` nao compartilham
+  handlers, namespaces, sessoes, rooms ou environments.
 
-Prioridade: media-alta.
+Criterios de aceite:
 
-- Revisar `pulseio/typing/*`; ha `ParamSpec` e type aliases que o Pyright nao
-  consegue validar.
-- Ajustar o retorno de `get_namespace_handler`, que hoje pode retornar `None`
-  apesar da anotacao indicar `Namespace`.
-- Ajustar `CustomJsonClass` em `pulseio/typing/_quart.py`; metodos de
-  `Protocol` com corpo apenas docstring devem usar `...` para satisfazer
-  Pyright.
-- Reduzir `pyright: ignore` e `noqa` aos casos realmente inevitaveis.
-- Revisar assinaturas publicas de `SocketIO.on`, `SocketIO.event`,
-  `SocketIO.emit`, `SocketIO.send`, `Namespace.emit` e helpers em `_utils.py`.
+- Alterar `Config()["handlers"]` nao altera outra instancia de `Config`.
+- Duas instancias de `SocketIO` nao compartilham estado de conexao.
 
-Criterio de aceite:
+## Fase 4 - Corrigir fluxo de eventos
+
+Prioridade: alta.
+
+Problemas observados:
+
+- `_trigger_event` monta `sid`, `event`, `namespace` e `environ` por indices
+  de `args`; isso e fragil contra a assinatura real de python-socketio.
+- `_handle_event` exige `event`, `namespace`, `sid`, `data` e `handler`, mas
+  alguns chamadores repassam `kwargs` incompletos.
+- Em `SocketIO.emit`, o wrapper de callback chama `_handle_event` por posicao
+  incompativel com a assinatura atual.
+- `send` chama `emit` de forma posicional, mas `SocketIO.emit` declara `event`
+  como keyword-only.
+- `handle_session` espera `environ`, mas recebe `request.namespace` ou uma
+  string em alguns fluxos.
+- `self.config["app"].error(err)` chama um metodo que Quart nao possui.
+- `on_error` grava handlers em `self.config["debug"][namespace]`, embora
+  `debug` seja booleano; deveria usar `exception_handlers`.
+
+Acoes:
+
+- Conferir a assinatura esperada de `AsyncServer._trigger_event` para a versao
+  de `python-socketio` travada no lock.
+- Normalizar um payload interno com campos explicitos: `event`, `namespace`,
+  `sid`, `environ`, `data`, `handler`.
+- Corrigir chamadas de `emit`, `send`, callbacks e `on_event` para usarem a
+  mesma convencao de argumentos.
+- Trocar `app.error` por `app.logger.exception` ou pelo fluxo configurado em
+  `on_error` e `on_error_default`.
+- Fazer `on_error` usar `exception_handlers`.
+- Definir comportamento documentado para retorno de excecoes em handlers.
+
+Criterios de aceite:
+
+- Eventos `connect`, `disconnect`, `message`, `json` e eventos customizados
+  funcionam com handlers async.
+- Callbacks de `emit` executam com contexto correto.
+- Handlers de erro por namespace e handler default sao chamados.
+
+## Fase 5 - Tipagem e contrato publico
+
+Prioridade: alta.
+
+Problemas observados pelo Pyright:
+
+- Atributos dinamicos `request.sid` e `request.namespace` nao existem nos tipos
+  de Quart.
+- `type Any = any` aparece em mais de um arquivo e quebra analise.
+- `Function = Callable[P, T]` usa `ParamSpec` e `TypeVar` fora da lista de
+  parametros do alias.
+- Protocolos em `typing/_quart.py` declaram retorno, mas nao retornam valor.
+- `get_namespace_handler` pode retornar `None`, mas anota `Namespace`.
+- `get_environ` pode retornar `None`, mas anota `dict[str, Any]`.
+- Tipos de `emit`, `send`, `on`, `event` e `_handle_event` nao refletem as
+  chamadas reais.
+
+Acoes:
+
+- Substituir aliases caseiros de `Any` por `typing.Any`.
+- Criar um tipo interno para request/websocket com `sid` e `namespace`, ou
+  encapsular acesso dinamico via helpers tipados.
+- Ajustar `Function`, `TExceptionHandler` e generics para Python 3.13+.
+- Em `Protocol`, usar `...` nos corpos dos metodos.
+- Anotar retornos opcionais como `Namespace | None` e
+  `dict[str, Any] | None`, tratando os casos no chamador.
+- Reduzir `pyright: ignore` aos casos inevitaveis, com comentario curto.
+
+Criterios de aceite:
 
 - `uv run pyright` passa sem erros.
-- Os ignores restantes tem motivo claro e localizado.
+- Ignorados restantes sao pontuais e explicados.
 
-## Fase 6 - Conformidade Ruff
-
-Prioridade: media.
-
-- Aplicar `ruff format` respeitando `line-length = 79` e aspas duplas.
-- Corrigir `docs/conf.py` ou ajustar o ignore de docs se a intencao for manter
-  um arquivo Sphinx gerado por template.
-- Remover `noqa` sem efeito e comentarios de codigo morto.
-- Reduzir `except Exception` amplo nos pontos em que o tipo esperado e
-  conhecido.
-- Substituir `print("Server stopped!")` em shutdown por logging.
-- Avaliar se as regras globais ignoradas em `pyproject.toml` ainda fazem
-  sentido: `D`, `SLF001`, `FIX`, `PYI021`, `PLC`, `PLR`, `ARG`, `PD`.
-
-Criterio de aceite:
-
-- `uv run ruff check .` e `uv run ruff format --check .` passam.
-
-## Fase 7 - Testes
+## Fase 6 - Compatibilidade e nomes
 
 Prioridade: media-alta.
 
-- Criar estrutura `tests/` com `pytest` e `pytest-asyncio`.
-- Testar `Config` para garantir que defaults mutaveis nao sao compartilhados.
-- Testar excecoes customizadas e helpers `raise_*`.
-- Testar middleware de headers proxy:
+Acoes:
+
+- Renomear `pulseio/middleare.py` para `pulseio/middleware.py`.
+- Manter `middleare.py` como shim temporario importando de `middleware.py`.
+- Renomear `enviroments` para `environments` com alias depreciado.
+- Atualizar imports internos para o nome correto.
+- Importar `SocketIOConnectionRefusedError` diretamente de
+  `socketio.exceptions` em vez de depender de `pulseio.main`.
+- Revisar `__all__` para exportar somente API publica intencional.
+
+Criterios de aceite:
+
+- Imports antigos continuam funcionando por uma versao menor.
+- Novos nomes corretos aparecem em docs e exemplos.
+
+## Fase 7 - Testes de regressao e integracao
+
+Prioridade: media-alta.
+
+Acoes:
+
+- Criar testes com `pytest` e `pytest-asyncio`.
+- Cobrir `Config` e defaults mutaveis.
+- Cobrir excecoes customizadas.
+- Cobrir helpers de contexto: `emit`, `send`, `call`, `join_room`,
+  `leave_room`, `rooms`, `close_room` e `disconnect`.
+- Cobrir middleware de proxy para:
   - `Forwarded`
   - `X-Forwarded-For`
   - `X-Forwarded-Proto`
   - `X-Forwarded-Host`
   - `SOCKETIO_TRUSTED_HOPS`
-- Testar integracao minima Quart + Socket.IO com cliente assincrono.
-- Adicionar testes de regressao para namespace baseado em classe.
+- Criar smoke test Quart + Socket.IO com cliente assincrono.
+- Testar namespace baseado em classe.
+- Testar o comportamento de `manage_session=True` e `manage_session=False`.
 
-Criterio de aceite:
+Criterios de aceite:
 
-- Suite roda localmente e no CI.
-- Cobertura inclui os fluxos publicos mais usados por consumidores da
-  biblioteca.
+- `uv run pytest` coleta e executa testes reais.
+- Fluxos publicos principais tem regressao automatizada.
 
-## Fase 8 - Documentacao e identidade do projeto
-
-Prioridade: media.
-
-- Atualizar README e docs para o nome `pulseio`, mantendo nota historica sobre
-  a origem em Flask-SocketIO/Quart-SocketIO se desejado.
-- Atualizar `docs/conf.py`: `project`, `author`, repo GitHub, titulos e nomes
-  de artefatos.
-- Revisar exemplos do README para refletir assinaturas reais.
-- Corrigir textos com encoding quebrado, como contracoes e palavras acentuadas
-  renderizadas com mojibake.
-- Documentar suporte real a Python 3.13/3.14.
-- Documentar modo de deploy com Uvicorn e Hypercorn, ou remover Hypercorn se
-  nao houver suporte implementado.
-
-Criterio de aceite:
-
-- Docs constroem sem warnings relevantes.
-- Exemplos copiados da documentacao executam em um app Quart minimo.
-
-## Fase 9 - Dependencias e empacotamento
+## Fase 8 - Dependencias e empacotamento
 
 Prioridade: media.
 
-- Revisar se `clear` precisa ser dependencia runtime; limpar terminal no
-  shutdown nao parece essencial para uma biblioteca.
-- Verificar se `hypercorn` deve ser dependencia obrigatoria, extra opcional ou
-  removida enquanto o launch mode real usa Uvicorn.
-- Definir extras opcionais para filas:
+Acoes:
+
+- Avaliar se `clear` deve ser dependencia runtime. Limpar terminal no shutdown
+  nao parece essencial para uma biblioteca.
+- Avaliar se `hypercorn` deve ser dependencia obrigatoria, extra opcional ou
+  removida enquanto o runner implementado usa Uvicorn.
+- Criar extras opcionais para filas, se aplicavel:
   - Redis
   - Kafka
   - ZeroMQ
   - Kombu
-- Atualizar `project.urls` para o repositorio definitivo.
-- Garantir que `MANIFEST.in` inclui docs e arquivos necessarios, mas nao
-  artefatos locais.
+- Atualizar `project.urls` para o repositorio definitivo de `PulseIo`.
+- Verificar `MANIFEST.in` para incluir apenas arquivos necessarios.
+- Validar wheel e sdist em ambiente limpo.
 
-Criterio de aceite:
+Criterios de aceite:
 
-- `python -m build` gera wheel/sdist instalaveis.
-- Instalar o pacote em ambiente limpo permite importar `pulseio` e executar um
-  app minimo.
+- `uv run python -m build` gera artefatos instalaveis.
+- Instalar a wheel em ambiente limpo permite `import pulseio`.
+- Dependencias runtime sao apenas as necessarias para uso basico.
 
-## Fase 10 - Compatibilidade e release
+## Fase 9 - Documentacao e identidade
+
+Prioridade: media.
+
+Acoes:
+
+- Atualizar README para `pulseio` como nome principal.
+- Corrigir links de `Quart-SocketIO`, Flask-SocketIO e repositorios antigos.
+- Corrigir templates em `.github/ISSUE_TEMPLATE`, incluindo `SockertIO`.
+- Remover ou consertar textos com mojibake, como palavras acentuadas
+  quebradas.
+- Documentar suporte real a Python 3.13 e 3.14.
+- Documentar comandos de desenvolvimento com `uv`.
+- Documentar exemplos para:
+  - app minimo Quart
+  - namespaces
+  - rooms
+  - callbacks
+  - deploy com Uvicorn
+  - uso atras de proxy
+
+Criterios de aceite:
+
+- Exemplo do README roda em app minimo.
+- Links apontam para o projeto atual.
+- Documentacao nao referencia ferramentas ausentes.
+
+## Fase 10 - Release
 
 Prioridade: baixa-media.
 
-- Definir politica de versionamento semantico para correcoes que alteram API.
-- Se renomear `middleare.py` e `enviroments`, manter aliases depreciados por
-  uma versao menor antes de remover.
-- Publicar changelog com:
-  - correcoes de exceptions
-  - correcoes de evento/sessao
-  - mudancas de suporte a Python
-  - mudancas de docs e empacotamento
-- Criar checklist de release com lint, type check, testes, build e smoke test.
+Acoes:
 
-Criterio de aceite:
+- Definir versionamento semantico.
+- Criar changelog.
+- Criar checklist de release:
+  - `uv run ruff format --check .`
+  - `uv run ruff check .`
+  - `uv run pyright`
+  - `uv run pytest`
+  - `uv run python -m build`
+  - smoke test de instalacao da wheel
+- Marcar aliases depreciados para remocao futura.
+- Publicar notas separando correcoes de bug, mudancas de API e melhorias de
+  documentacao.
 
-- Uma nova release pode ser reproduzida a partir de comandos documentados.
+Criterios de aceite:
 
-## Ordem sugerida de execucao
+- Release pode ser reproduzida por comandos documentados.
+- Mudancas incompativeis sao explicitamente comunicadas.
 
-1. Corrigir tooling/CI para conseguir medir o progresso.
-2. Corrigir excecoes, imports quebrados e estado compartilhado.
-3. Adicionar testes de regressao para os bugs corrigidos.
-4. Corrigir fluxo de eventos/sessoes com testes de integracao.
-5. Limpar tipagem e Ruff ate `pyright` e `ruff` passarem.
-6. Atualizar docs, README, empacotamento e release.
+## Ordem sugerida
+
+1. Corrigir tooling e CI.
+2. Corrigir excecoes e Ruff.
+3. Isolar estado mutavel.
+4. Adicionar testes de regressao para os bugs corrigidos.
+5. Corrigir fluxo de eventos, sessoes e callbacks.
+6. Resolver Pyright.
+7. Renomear typos com compatibilidade.
+8. Limpar dependencias, empacotamento e documentacao.
+9. Preparar release.
 
 ## Checklist rapido
 
-- [ ] Ambiente dev declarado no `pyproject.toml`.
+- [ ] Ambiente dev declarado em `pyproject.toml`.
 - [ ] CI alinhado a Python `>=3.13`.
-- [ ] Ruff passando.
-- [ ] Pyright passando.
-- [ ] Tests criados e passando.
+- [ ] `uv run ruff check .` passando.
+- [ ] `uv run ruff format --check .` passando.
+- [ ] `uv run pyright` passando.
+- [ ] `uv run pytest` coletando e passando testes.
 - [ ] Excecoes customizadas corrigidas.
 - [ ] Defaults mutaveis isolados por instancia.
-- [ ] Imports e nomes com typo tratados com compatibilidade.
-- [ ] Fluxo Socket.IO validado por testes.
-- [ ] README/docs atualizados para `pulseio`.
-- [ ] Build wheel/sdist validado em ambiente limpo.
+- [ ] Fluxo de eventos e callbacks validado.
+- [ ] Sessoes validadas com `manage_session=True` e `False`.
+- [ ] `middleare` e `enviroments` tratados com compatibilidade.
+- [ ] README, issue templates e URLs atualizados.
+- [ ] Build de wheel/sdist validado em ambiente limpo.

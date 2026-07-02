@@ -6,9 +6,7 @@ from quart import current_app, request
 
 if TYPE_CHECKING:
     from pulseio import SocketIO
-
-
-type Any = object
+    from pulseio._types import Any
 
 
 async def emit(event: str, *args: Any, **kwargs: Any) -> None:

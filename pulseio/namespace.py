@@ -17,9 +17,8 @@ if TYPE_CHECKING:
     from flask.sessions import SessionMixin
 
     from pulseio import SocketIO
+    from pulseio._types import Any
     from pulseio.typing import Function
-
-type Any = object
 
 
 class Namespace(BaseNamespace):
