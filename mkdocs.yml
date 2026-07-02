@@ -30,6 +30,7 @@ nav:
       - Public API: api.md
       - Internal architecture: internals.md
       - Development: development.md
+      - Contributing: contributing.md
 
 plugins:
   - search
@@ -57,6 +58,7 @@ plugins:
             Public API: API pública
             Internal architecture: Arquitetura interna
             Development: Desenvolvimento
+            Contributing: Contribuição
   - mkdocstrings:
       handlers:
         python:
