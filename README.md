@@ -48,4 +48,4 @@ if __name__ == "__main__":
 
 - [Quart Documentation](https://quart.palletsprojects.com/en/latest/)
 - [python-socketio Documentation](https://python-socketio.readthedocs.io/)
-- [PyPI (unavailable)](#)
+- [PyPI](https://pypi.org/project/quart-socketio/)
