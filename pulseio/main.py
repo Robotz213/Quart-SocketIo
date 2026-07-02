@@ -25,7 +25,7 @@ if TYPE_CHECKING:
     from pulseio._types import Function
 
 
-class reason:  # noqa: N801
+class Reason:
     """Disconnection reasons."""
 
     #: Server-initiated disconnection.
@@ -41,7 +41,7 @@ class reason:  # noqa: N801
 
 
 class SocketIO(Controller):
-    reason: type[reason] = reason
+    reason: type[Reason] = Reason
 
     def __init__(self, **kwargs: Any) -> None:
         self.environments: dict[str, dict[str, Any]] = {}
