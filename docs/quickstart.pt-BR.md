@@ -1,6 +1,6 @@
-# First app
+# Primeiro app
 
-Create a Quart application, initialize `SocketIO`, and register events with
+Crie uma aplicação Quart, inicialize `SocketIO` e registre eventos com
 decorators.
 
 ```python
@@ -27,9 +27,9 @@ if __name__ == "__main__":
     socketio.run(app, host="127.0.0.1", port=5000)
 ```
 
-## Late initialization
+## Inicialização tardia
 
-You can also create the extension without an app and initialize it later:
+Também é possível criar a extensão sem app e inicializá-la depois:
 
 ```python
 from quart import Quart
@@ -44,12 +44,11 @@ def create_app():
     return app
 ```
 
-## Handler context
+## Contexto dos handlers
 
-Socket.IO handlers can access the Quart context created by PulseIo during the
-event. The code creates a `Request` with dynamic `sid` and `namespace`
-attributes so helpers such as `emit()` and `join_room()` know which client
-started the event.
+Handlers Socket.IO podem acessar o contexto Quart criado pelo PulseIo durante o
+evento. O código cria um `Request` com `sid` e `namespace` dinâmicos para que
+helpers como `emit()` e `join_room()` saibam qual cliente originou o evento.
 
 ```python
 from pulseio import emit, join_room

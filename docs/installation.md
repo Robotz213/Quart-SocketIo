@@ -1,24 +1,25 @@
-# Instalacao
+# Installation
 
-## Como dependencia
+## As a dependency
 
-Enquanto o pacote nao estiver publicado no PyPI, instale direto do repositorio:
+Until the package is published to PyPI, install it directly from the
+repository:
 
 ```bash
 pip install git+https://github.com/Robotz213/PulseIo.git
 ```
 
-O projeto declara suporte a Python `>=3.13`.
+The project declares support for Python `>=3.13`.
 
-## Ambiente de desenvolvimento
+## Development environment
 
-O repositorio usa `uv` para resolver dependencias:
+The repository uses `uv` to resolve dependencies:
 
 ```bash
 uv sync --all-extras --dev
 ```
 
-Depois disso, os comandos de manutencao ficam disponiveis:
+After that, the maintenance commands are available:
 
 ```bash
 uv run ruff format .
@@ -28,9 +29,9 @@ uv run pytest
 uv run mkdocs build --strict
 ```
 
-## Dependencias de runtime
+## Runtime dependencies
 
-PulseIo depende de:
+PulseIo depends on:
 
 - `quart`
 - `python-socketio`
@@ -39,4 +40,4 @@ PulseIo depende de:
 - `websockets`
 - `clear`
 
-O runner implementado no codigo usa Uvicorn por padrao.
+The runner implemented in the code uses Uvicorn by default.

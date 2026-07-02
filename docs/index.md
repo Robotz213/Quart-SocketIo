@@ -1,33 +1,33 @@
 # PulseIo
 
-PulseIo e inspirado no projeto
-[Flask-SocketIO](https://github.com/miguelgrinberg/Flask-SocketIO), criado e
-mantido por [Miguel Grinberg](https://github.com/miguelgrinberg). A proposta
-deste projeto e trazer uma experiencia semelhante para aplicacoes Quart
-assincronas.
+PulseIo is inspired by
+[Flask-SocketIO](https://github.com/miguelgrinberg/Flask-SocketIO), created
+and maintained by [Miguel Grinberg](https://github.com/miguelgrinberg). This
+project brings a similar developer experience to asynchronous Quart
+applications.
 
-PulseIo integra [Quart](https://quart.palletsprojects.com/) com
-[python-socketio](https://python-socketio.readthedocs.io/) para criar
-aplicacoes Socket.IO assincronas em ASGI.
+PulseIo integrates [Quart](https://quart.palletsprojects.com/) with
+[python-socketio](https://python-socketio.readthedocs.io/) to build
+asynchronous Socket.IO applications on ASGI.
 
-O pacote fornece uma API familiar para quem conhece Flask-SocketIO, mas roda
-com `async`/`await`, usa Quart como aplicacao web e encapsula o servidor
-Socket.IO em um middleware ASGI.
+The package provides an API that feels familiar to Flask-SocketIO users, while
+running with `async`/`await`, using Quart as the web application, and wrapping
+the Socket.IO server in ASGI middleware.
 
-## O que existe no projeto
+## What is in the project
 
-- `pulseio.SocketIO`: extensao principal que registra eventos, namespaces,
-  middleware e servidor ASGI.
-- Helpers de contexto: `emit`, `send`, `call`, `join_room`, `leave_room`,
-  `close_room`, `rooms` e `disconnect`.
-- `pulseio.Namespace`: base para organizar eventos por classe.
-- `pulseio.Config`: defaults e opcoes de configuracao do servidor.
-- `pulseio.middleware.QuartSocketIOMiddleware`: middleware ASGI que integra
-  Quart, Socket.IO e headers de proxy.
-- Excecoes customizadas em `pulseio.common.exceptions`.
-- Tipos auxiliares em `pulseio._types`.
+- `pulseio.SocketIO`: the main extension that registers events, namespaces,
+  middleware, and the ASGI server.
+- Context helpers: `emit`, `send`, `call`, `join_room`, `leave_room`,
+  `close_room`, `rooms`, and `disconnect`.
+- `pulseio.Namespace`: a base class for class-based namespaces.
+- `pulseio.Config`: configuration defaults and server options.
+- `pulseio.middleware.QuartSocketIOMiddleware`: ASGI middleware that connects
+  Quart, Socket.IO, and proxy headers.
+- Custom exceptions in `pulseio.common.exceptions`.
+- Helper types in `pulseio._types`.
 
-## Exemplo minimo
+## Minimal example
 
 ```python
 from quart import Quart
@@ -46,7 +46,7 @@ if __name__ == "__main__":
     socketio.run(app)
 ```
 
-## Comandos principais
+## Main commands
 
 ```bash
 uv sync --all-extras --dev

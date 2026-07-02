@@ -1,9 +1,9 @@
-# Events
+# Eventos
 
 ## `@socketio.on`
 
-Use `on()` when the event name is explicit or when you need to set a
-namespace.
+Use `on()` quando o nome do evento for explícito ou quando precisar informar
+um namespace.
 
 ```python
 @socketio.on("chat message", namespace="/chat")
@@ -13,7 +13,7 @@ async def handle_chat(data):
 
 ## `@socketio.event`
 
-Use `event()` when the event name should match the function name.
+Use `event()` quando o nome do evento for o nome da função.
 
 ```python
 @socketio.event
@@ -21,7 +21,7 @@ async def status(data):
     return {"ok": True, "data": data}
 ```
 
-This is equivalent to:
+Equivale a:
 
 ```python
 @socketio.on("status")
@@ -29,9 +29,9 @@ async def status(data):
     return {"ok": True, "data": data}
 ```
 
-## Registration without decorator syntax
+## Registro sem sintaxe de decorator
 
-`on_event()` registers a handler directly.
+`on_event()` registra um handler diretamente.
 
 ```python
 async def handle_refresh(data):
@@ -41,10 +41,10 @@ async def handle_refresh(data):
 socketio.on_event("refresh", handle_refresh)
 ```
 
-## Emitting events
+## Envio de eventos
 
-`SocketIO.emit()` can be used outside an event context, for example in HTTP
-routes or background tasks.
+`SocketIO.emit()` pode ser usado fora do contexto de um evento, por exemplo em
+rotas HTTP ou tarefas de background.
 
 ```python
 @app.post("/notify")
@@ -53,9 +53,9 @@ async def notify():
     return {"queued": True}
 ```
 
-The global `emit()` helper should be used inside Socket.IO handlers. It uses
-`quart.request.sid` and `quart.request.namespace` to reply to the current
-client when `broadcast=False`.
+O helper global `emit()` deve ser usado dentro de handlers Socket.IO. Ele usa
+`quart.request.sid` e `quart.request.namespace` para responder ao cliente
+atual quando `broadcast=False`.
 
 ```python
 from pulseio import emit
@@ -66,10 +66,10 @@ async def ping(data):
     await emit("pong", data)
 ```
 
-## `send()` and `call()`
+## `send()` e `call()`
 
-`send()` is a simplified way to send a `message` or `json` event. `call()`
-emits an event and waits for a client acknowledgement until the timeout.
+`send()` é uma forma simplificada de enviar uma mensagem `message` ou `json`.
+`call()` emite um evento e aguarda o acknowledgement do cliente até o timeout.
 
 ```python
 from pulseio import call, send
@@ -81,10 +81,9 @@ async def needs_ack(data):
     await send({"ack": result}, json=True)
 ```
 
-## Disconnection
+## Desconexão
 
-`disconnect()` closes the current client connection, or the connection for a
-provided `sid`.
+`disconnect()` encerra a conexão do cliente atual, ou de um `sid` informado.
 
 ```python
 from pulseio import disconnect

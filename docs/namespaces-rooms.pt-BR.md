@@ -1,9 +1,9 @@
-# Namespaces and rooms
+# Namespaces e rooms
 
-## Class-based namespaces
+## Namespaces por classe
 
-Subclass `pulseio.Namespace` to group related events. Methods prefixed with
-`on_` are used as handlers.
+Subclasse `pulseio.Namespace` para agrupar eventos relacionados. Métodos com
+prefixo `on_` são usados como handlers.
 
 ```python
 from pulseio import Namespace
@@ -20,12 +20,12 @@ class ChatNamespace(Namespace):
 socketio.on_namespace(ChatNamespace("/chat"))
 ```
 
-`Namespace.emit()`, `Namespace.send()`, and `Namespace.close_room()` use the
-instance namespace when no namespace is provided.
+`Namespace.emit()`, `Namespace.send()` e `Namespace.close_room()` usam o
+namespace da instância quando nenhum namespace é informado.
 
 ## Rooms
 
-Rooms let you send messages to groups of clients within a namespace.
+Rooms permitem enviar mensagens para grupos de clientes dentro de um namespace.
 
 ```python
 from pulseio import emit, join_room, leave_room, rooms
@@ -50,9 +50,9 @@ async def my_rooms(data):
     await emit("rooms", {"items": rooms()})
 ```
 
-## Closing rooms
+## Fechando rooms
 
-`close_room()` removes users from a room and deletes the room on the server.
+`close_room()` remove os usuários de uma room e apaga a room no servidor.
 
 ```python
 from pulseio import close_room
