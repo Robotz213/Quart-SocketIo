@@ -1,4 +1,4 @@
-from pulseio import Config, SocketIO
+from quart_socketio import Config, SocketIO
 
 
 def test_config_mutable_defaults_are_isolated() -> None:

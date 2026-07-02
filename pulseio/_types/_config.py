@@ -18,8 +18,7 @@ if TYPE_CHECKING:
 
     from quart import Quart
     from quart.json.provider import JSONProvider
-
-    from pulseio._types import (
+    from quart_socketio._types import (
         Any,
         AsyncMode,
         Channel,
@@ -27,7 +26,7 @@ if TYPE_CHECKING:
         SocketIo,
         Transports,
     )
-    from pulseio._types._main import LaunchMode
+    from quart_socketio._types._main import LaunchMode
 
 
 class Config(TypedDict):

@@ -16,25 +16,22 @@ import socketio
 from clear import clear
 from quart import Quart, Request, Websocket, session
 from quart import json as quart_json
-from uvicorn.middleware.proxy_headers import ProxyHeadersMiddleware
-from werkzeug.datastructures.headers import Headers
-
-from pulseio.common.exceptions import (
+from quart_socketio.common.exceptions import (
     raise_runtime_error,
     raise_value_error,
 )
-from pulseio.config import Config
-from pulseio.middleware import QuartSocketIOMiddleware as Middleware
-from pulseio.namespace import Namespace
+from quart_socketio.config import Config
+from quart_socketio.middleware import QuartSocketIOMiddleware as Middleware
+from quart_socketio.namespace import Namespace
+from uvicorn.middleware.proxy_headers import ProxyHeadersMiddleware
+from werkzeug.datastructures.headers import Headers
 
 from ._manager import _ManagedSession
 
 if TYPE_CHECKING:
     from logging import Logger
 
-    from uvicorn import Server
-
-    from pulseio._types import (
+    from quart_socketio._types import (
         Any,
         AsyncMode,
         Channel,
@@ -45,7 +42,8 @@ if TYPE_CHECKING:
         SocketIo,
         Transports,
     )
-    from pulseio._types._quart import CustomJsonClass
+    from quart_socketio._types._quart import CustomJsonClass
+    from uvicorn import Server
 
     from ._types._config import RunKwargs
 
@@ -194,7 +192,7 @@ class Controller:
 
         app.debug = self.config["debug"]
 
-        from pulseio._uvicorn import run_uvicorn
+        from quart_socketio._uvicorn import run_uvicorn
 
         self.uvicorn_server = run_uvicorn(**self.config)
         self.uvicorn_server.run()

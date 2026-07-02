@@ -1,8 +1,8 @@
-site_name: PulseIo
+site_name: Quart-SocketIo
 site_description: Async Socket.IO integration for Quart applications
-site_url: https://robotz213.github.io/PulseIo/
-repo_url: https://github.com/Robotz213/PulseIo
-repo_name: Robotz213/PulseIo
+site_url: https://robotz213.github.io/Quart-SocketIo/
+repo_url: https://github.com/Robotz213/Quart-SocketIo
+repo_name: Robotz213/Quart-SocketIo
 
 theme:
   name: material
@@ -43,7 +43,7 @@ plugins:
         - locale: pt-BR
           name: Português brasileiro
           build: true
-          site_name: PulseIo
+          site_name: Quart-SocketIo
           nav_translations:
             Home: Início
             Guide: Guia

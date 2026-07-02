@@ -5,7 +5,7 @@ import platform
 from logging.config import dictConfig
 from typing import TYPE_CHECKING, Unpack
 
-from pulseio.common.exceptions import raise_value_error
+from quart_socketio.common.exceptions import raise_value_error
 
 if TYPE_CHECKING:
     from uvicorn import Server

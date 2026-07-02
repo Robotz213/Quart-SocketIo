@@ -1,12 +1,12 @@
-# PulseIo
+# Quart-SocketIo
 
-PulseIo é inspirado no projeto
+Quart-SocketIo é inspirado no projeto
 [Flask-SocketIO](https://github.com/miguelgrinberg/Flask-SocketIO), criado e
 mantido por [Miguel Grinberg](https://github.com/miguelgrinberg). A proposta
 deste projeto é trazer uma experiência semelhante para aplicações Quart
 assíncronas.
 
-PulseIo integra [Quart](https://quart.palletsprojects.com/) com
+Quart-SocketIo integra [Quart](https://quart.palletsprojects.com/) com
 [python-socketio](https://python-socketio.readthedocs.io/) para criar
 aplicações Socket.IO assíncronas em ASGI.
 

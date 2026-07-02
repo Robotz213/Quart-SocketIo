@@ -6,7 +6,7 @@ from typing import TYPE_CHECKING, Any
 from quart import current_app, request
 
 if TYPE_CHECKING:
-    from pulseio import SocketIO
+    from quart_socketio import SocketIO
 
 
 async def emit(

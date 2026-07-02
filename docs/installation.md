@@ -6,7 +6,7 @@ Until the package is published to PyPI, install it directly from the
 repository:
 
 ```bash
-pip install git+https://github.com/Robotz213/PulseIo.git
+pip install git+https://github.com/Robotz213/Quart-SocketIo.git
 ```
 
 The project declares support for Python `>=3.13`.
@@ -31,7 +31,7 @@ uv run mkdocs build --strict
 
 ## Runtime dependencies
 
-PulseIo depends on:
+Quart-SocketIo depends on:
 
 - `quart`
 - `python-socketio`

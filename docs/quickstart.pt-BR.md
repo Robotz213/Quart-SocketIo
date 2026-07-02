@@ -46,7 +46,7 @@ def create_app():
 
 ## Contexto dos handlers
 
-Handlers Socket.IO podem acessar o contexto Quart criado pelo PulseIo durante o
+Handlers Socket.IO podem acessar o contexto Quart criado pelo Quart-SocketIo durante o
 evento. O código cria um `Request` com `sid` e `namespace` dinâmicos para que
 helpers como `emit()` e `join_room()` saibam qual cliente originou o evento.
 

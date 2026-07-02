@@ -4,22 +4,20 @@ import traceback
 from inspect import iscoroutinefunction
 from typing import TYPE_CHECKING, Any, cast
 
+from quart_socketio.common.exceptions import QuartSocketioError
 from socketio import AsyncNamespace as BaseNamespace
 from socketio import AsyncServer
 from socketio.exceptions import (
     ConnectionRefusedError as SocketIOConnectionRefusedError,
 )
 
-from pulseio.common.exceptions import QuartSocketioError
-
 if TYPE_CHECKING:
     from collections.abc import Callable
 
     from flask.sessions import SessionMixin
     from quart import Quart, Request
-
-    from pulseio import SocketIO
-    from pulseio._types import Function
+    from quart_socketio import SocketIO
+    from quart_socketio._types import Function
 
 
 class Namespace(BaseNamespace):

@@ -267,7 +267,7 @@ Acoes:
   - Kafka
   - ZeroMQ
   - Kombu
-- Atualizar `project.urls` para o repositorio definitivo de `PulseIo`.
+- Atualizar `project.urls` para o repositorio definitivo de `Quart-SocketIo`.
 - Verificar `MANIFEST.in` para incluir apenas arquivos necessarios.
 - Validar wheel e sdist em ambiente limpo.
 

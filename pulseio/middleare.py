@@ -1,5 +1,5 @@
 from __future__ import annotations
 
-from pulseio.middleware import QuartSocketIOMiddleware
+from quart_socketio.middleware import QuartSocketIOMiddleware
 
 __all__ = ["QuartSocketIOMiddleware"]

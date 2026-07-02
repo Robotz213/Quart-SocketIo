@@ -2,7 +2,7 @@
 
 ## Overview
 
-PulseIo has three main layers:
+Quart-SocketIo has three main layers:
 
 1. Public API in `pulseio.__init__`, `SocketIO`, `Namespace`, and helpers.
 2. Controller logic in `pulseio.core.Controller`, which creates the Socket.IO
@@ -26,7 +26,7 @@ SocketIO(...)
 
 `configure_server()` creates `socketio.AsyncServer(**config)`, registers
 decorated handlers, registers namespaces, and replaces `_trigger_event` with
-the PulseIo dispatcher.
+the Quart-SocketIo dispatcher.
 
 ## Event flow
 

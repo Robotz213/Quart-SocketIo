@@ -5,9 +5,8 @@ from typing import Any, cast
 
 import pytest
 from quart import Quart
-
-from pulseio import Namespace, SocketIO
-from pulseio.common.exceptions import QuartValueError
+from quart_socketio import Namespace, SocketIO
+from quart_socketio.common.exceptions import QuartValueError
 
 
 class DummyServer:

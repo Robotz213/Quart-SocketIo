@@ -8,7 +8,7 @@ Socket.IO integration for Quart applications.
 
 You can install this package using pip:
 
-    pip install git+https://github.com/Robotz213/PulseIo.git
+    pip install git+https://github.com/Robotz213/Quart-SocketIo.git
 
 For local development, use `uv`:
 

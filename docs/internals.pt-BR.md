@@ -2,7 +2,7 @@
 
 ## Visão geral
 
-PulseIo tem três camadas principais:
+Quart-SocketIo tem três camadas principais:
 
 1. API pública em `pulseio.__init__`, `SocketIO`, `Namespace` e helpers.
 2. Controlador em `pulseio.core.Controller`, que cria o servidor Socket.IO,
@@ -26,7 +26,7 @@ SocketIO(...)
 
 `configure_server()` cria `socketio.AsyncServer(**config)`, registra handlers
 decorados, registra namespaces e substitui `_trigger_event` pelo dispatcher do
-PulseIo.
+Quart-SocketIo.
 
 ## Fluxo de evento
 

@@ -1,6 +1,5 @@
 import pytest
-
-from pulseio.common.exceptions import (
+from quart_socketio.common.exceptions import (
     QuartRuntimeError,
     QuartSocketioError,
     QuartTypeError,

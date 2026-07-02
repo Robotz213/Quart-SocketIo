@@ -8,21 +8,19 @@ from typing import TYPE_CHECKING, Any, cast
 
 from quart import Quart, has_request_context
 from quart import websocket as request
+from quart_socketio.common.exceptions import QuartTypeError, raise_value_error
+from quart_socketio.core import Controller
 from socketio.exceptions import (
     ConnectionRefusedError as SocketIOConnectionRefusedError,
 )
-
-from pulseio.common.exceptions import QuartTypeError, raise_value_error
-from pulseio.core import Controller
 
 from .namespace import Namespace
 
 if TYPE_CHECKING:
     from collections.abc import Callable
 
+    from quart_socketio._types import Function
     from werkzeug.datastructures.headers import Headers
-
-    from pulseio._types import Function
 
 
 class Reason:

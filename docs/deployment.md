@@ -17,7 +17,7 @@ The wrapper creates a Uvicorn configuration with:
 
 ## ASGI middleware
 
-During `init_app()`, PulseIo:
+During `init_app()`, Quart-SocketIo:
 
 1. Creates a `socketio.AsyncServer`.
 2. Registers handlers and namespaces.
@@ -32,10 +32,10 @@ During `init_app()`, PulseIo:
 
 Configuration values read from `app.config`:
 
-| Key | Default | Description |
-| --- | --- | --- |
-| `SOCKETIO_MODE` | `modern` | Uses `Forwarded` when available. |
-| `SOCKETIO_TRUSTED_HOPS` | `1` | Number of hops from the right to trust. |
+| Key                     | Default  | Description                             |
+| ----------------------- | -------- | --------------------------------------- |
+| `SOCKETIO_MODE`         | `modern` | Uses `Forwarded` when available.        |
+| `SOCKETIO_TRUSTED_HOPS` | `1`      | Number of hops from the right to trust. |
 
 In `modern` mode, the middleware understands the `Forwarded` header:
 

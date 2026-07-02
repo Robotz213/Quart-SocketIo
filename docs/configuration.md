@@ -6,25 +6,25 @@ instances.
 
 ## Main defaults
 
-| Option | Default | Description |
-| --- | --- | --- |
-| `app` | `None` | Associated Quart application. |
-| `host` | `localhost` | Host used by `socketio.run()`. |
-| `port` | `5000` | Port used by `socketio.run()`. |
-| `debug` | `False` | Sets `app.debug`. |
-| `use_reloader` | `False` | Preserved reloader option. |
-| `launch_mode` | `uvicorn` | Declared server mode. |
-| `manage_session` | `True` | Controls how Quart sessions are handled during events. |
-| `logger` | `False` | python-socketio logger. |
-| `engineio_logger` | `False` | Engine.IO logger. |
-| `socketio_path` | `/socket.io` | Socket.IO endpoint path. |
-| `engineio_path` | `/engine.io` | Declared Engine.IO path. |
-| `async_mode` | `asgi` | Async mode passed to python-socketio. |
-| `cors_allowed_origins` | `*` | Accepted CORS origins. |
-| `cors_credentials` | `True` | Allows credentials in CORS. |
-| `transports` | `["polling", "websocket"]` | Enabled transports. |
-| `message_queue` | `None` | Queue URL for multiple processes. |
-| `channel` | `quart-socketio` | Queue channel. |
+| Option                 | Default                    | Description                                            |
+| ---------------------- | -------------------------- | ------------------------------------------------------ |
+| `app`                  | `None`                     | Associated Quart application.                          |
+| `host`                 | `localhost`                | Host used by `socketio.run()`.                         |
+| `port`                 | `5000`                     | Port used by `socketio.run()`.                         |
+| `debug`                | `False`                    | Sets `app.debug`.                                      |
+| `use_reloader`         | `False`                    | Preserved reloader option.                             |
+| `launch_mode`          | `uvicorn`                  | Declared server mode.                                  |
+| `manage_session`       | `True`                     | Controls how Quart sessions are handled during events. |
+| `logger`               | `False`                    | python-socketio logger.                                |
+| `engineio_logger`      | `False`                    | Engine.IO logger.                                      |
+| `socketio_path`        | `/socket.io`               | Socket.IO endpoint path.                               |
+| `engineio_path`        | `/engine.io`               | Declared Engine.IO path.                               |
+| `async_mode`           | `asgi`                     | Async mode passed to python-socketio.                  |
+| `cors_allowed_origins` | `*`                        | Accepted CORS origins.                                 |
+| `cors_credentials`     | `True`                     | Allows credentials in CORS.                            |
+| `transports`           | `["polling", "websocket"]` | Enabled transports.                                    |
+| `message_queue`        | `None`                     | Queue URL for multiple processes.                      |
+| `channel`              | `quart-socketio`           | Queue channel.                                         |
 
 ## Socket.IO options
 
@@ -50,12 +50,12 @@ including:
 When `message_queue` is configured, the project selects a manager based on the
 URL prefix:
 
-| Prefix | Manager |
-| --- | --- |
+| Prefix                  | Manager                      |
+| ----------------------- | ---------------------------- |
 | `redis://`, `rediss://` | `socketio.AsyncRedisManager` |
-| `kafka://` | `socketio.KafkaManager` |
-| `zmq` | `socketio.ZmqManager` |
-| Other prefixes | `socketio.KombuManager` |
+| `kafka://`              | `socketio.KafkaManager`      |
+| `zmq`                   | `socketio.ZmqManager`        |
+| Other prefixes          | `socketio.KombuManager`      |
 
 ```python
 socketio = SocketIO(
@@ -67,6 +67,6 @@ socketio = SocketIO(
 
 ## Sessions
 
-With `manage_session=True`, PulseIo creates a managed session for Socket.IO
+With `manage_session=True`, Quart-SocketIo creates a managed session for Socket.IO
 events. With `manage_session=False`, the code tries to use the session object
 managed by Quart.

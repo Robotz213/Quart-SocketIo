@@ -1,5 +1,10 @@
-from pulseio.middleare import QuartSocketIOMiddleware as CompatMiddleware
-from pulseio.middleware import QuartSocketIOMiddleware, _get_trusted_value
+from quart_socketio.middleare import (
+    QuartSocketIOMiddleware as CompatMiddleware,
+)
+from quart_socketio.middleware import (
+    QuartSocketIOMiddleware,
+    _get_trusted_value,
+)
 
 
 def test_middleare_compatibility_shim_exports_middleware() -> None:
