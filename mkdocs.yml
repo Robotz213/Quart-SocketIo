@@ -6,7 +6,7 @@ repo_name: Robotz213/PulseIo
 
 theme:
   name: material
-  language: pt-BR
+  language: en
   features:
     - navigation.sections
     - navigation.top
@@ -18,21 +18,45 @@ theme:
       accent: amber
 
 nav:
-  - Inicio: index.md
-  - Guia:
-      - Instalacao: installation.md
-      - Primeiro app: quickstart.md
-      - Eventos: events.md
-      - Namespaces e rooms: namespaces-rooms.md
-      - Configuracao: configuration.md
-      - Deploy e proxies: deployment.md
-  - Referencia:
-      - API publica: api.md
-      - Arquitetura interna: internals.md
-      - Desenvolvimento: development.md
+  - Home: index.md
+  - Guide:
+      - Installation: installation.md
+      - First app: quickstart.md
+      - Events: events.md
+      - Namespaces and rooms: namespaces-rooms.md
+      - Configuration: configuration.md
+      - Deployment and proxies: deployment.md
+  - Reference:
+      - Public API: api.md
+      - Internal architecture: internals.md
+      - Development: development.md
 
 plugins:
   - search
+  - i18n:
+      docs_structure: suffix
+      languages:
+        - locale: en
+          name: English
+          default: true
+          build: true
+        - locale: pt-BR
+          name: Português brasileiro
+          build: true
+          site_name: PulseIo
+          nav_translations:
+            Home: Início
+            Guide: Guia
+            Installation: Instalação
+            First app: Primeiro app
+            Events: Eventos
+            Namespaces and rooms: Namespaces e rooms
+            Configuration: Configuração
+            Deployment and proxies: Deploy e proxies
+            Reference: Referência
+            Public API: API pública
+            Internal architecture: Arquitetura interna
+            Development: Desenvolvimento
   - mkdocstrings:
       handlers:
         python:
