@@ -58,7 +58,7 @@ The global `emit()` helper should be used inside Socket.IO handlers. It uses
 client when `broadcast=False`.
 
 ```python
-from pulseio import emit
+from quart_socketio import emit
 
 
 @socketio.event
@@ -72,7 +72,7 @@ async def ping(data):
 emits an event and waits for a client acknowledgement until the timeout.
 
 ```python
-from pulseio import call, send
+from quart_socketio import call, send
 
 
 @socketio.event
@@ -87,7 +87,7 @@ async def needs_ack(data):
 provided `sid`.
 
 ```python
-from pulseio import disconnect
+from quart_socketio import disconnect
 
 
 @socketio.event

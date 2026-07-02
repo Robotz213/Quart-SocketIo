@@ -32,7 +32,7 @@ The output is written to `site/`.
 ## Relevant structure
 
 ```text
-pulseio/
+quart_socketio/
   __init__.py          # public exports
   main.py              # SocketIO and event decorators
   core.py              # Controller, init_app, run, Quart context
@@ -53,7 +53,7 @@ The current tests cover:
 - isolation of mutable `Config` defaults;
 - isolation of `SocketIO.environments`;
 - custom exceptions and raise helpers;
-- the `pulseio.middleare` shim;
+- the `quart_socketio.middleare` shim;
 - trusted header selection by hop;
 - `SocketIO` handler registration, dispatching, namespaces, and delegation.
 

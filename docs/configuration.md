@@ -1,6 +1,6 @@
 # Configuration
 
-`pulseio.Config` is a `UserDict` initialized with a deep copy of the defaults.
+`quart_socketio.Config` is a `UserDict` initialized with a deep copy of the defaults.
 This prevents mutable lists and dictionaries from being shared across
 instances.
 

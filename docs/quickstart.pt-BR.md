@@ -5,7 +5,7 @@ decorators.
 
 ```python
 from quart import Quart, render_template
-from pulseio import SocketIO, emit
+from quart_socketio import SocketIO, emit
 
 app = Quart(__name__)
 app.config["SECRET_KEY"] = "secret!"
@@ -33,7 +33,7 @@ Também é possível criar a extensão sem app e inicializá-la depois:
 
 ```python
 from quart import Quart
-from pulseio import SocketIO
+from quart_socketio import SocketIO
 
 socketio = SocketIO()
 
@@ -51,7 +51,7 @@ evento. O código cria um `Request` com `sid` e `namespace` dinâmicos para que
 helpers como `emit()` e `join_room()` saibam qual cliente originou o evento.
 
 ```python
-from pulseio import emit, join_room
+from quart_socketio import emit, join_room
 
 
 @socketio.on("join")

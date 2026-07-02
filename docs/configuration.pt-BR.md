@@ -1,6 +1,6 @@
 # Configuração
 
-`pulseio.Config` é um `UserDict` inicializado com uma cópia profunda dos
+`quart_socketio.Config` é um `UserDict` inicializado com uma cópia profunda dos
 defaults. Isso evita que listas e dicionários mutáveis sejam compartilhados
 entre instâncias.
 

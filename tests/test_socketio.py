@@ -5,6 +5,7 @@ from typing import Any, cast
 
 import pytest
 from quart import Quart
+
 from quart_socketio import Namespace, SocketIO
 from quart_socketio.common.exceptions import QuartValueError
 

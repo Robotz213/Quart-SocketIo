@@ -16,6 +16,9 @@ import socketio
 from clear import clear
 from quart import Quart, Request, Websocket, session
 from quart import json as quart_json
+from uvicorn.middleware.proxy_headers import ProxyHeadersMiddleware
+from werkzeug.datastructures.headers import Headers
+
 from quart_socketio.common.exceptions import (
     raise_runtime_error,
     raise_value_error,
@@ -23,13 +26,13 @@ from quart_socketio.common.exceptions import (
 from quart_socketio.config import Config
 from quart_socketio.middleware import QuartSocketIOMiddleware as Middleware
 from quart_socketio.namespace import Namespace
-from uvicorn.middleware.proxy_headers import ProxyHeadersMiddleware
-from werkzeug.datastructures.headers import Headers
 
 from ._manager import _ManagedSession
 
 if TYPE_CHECKING:
     from logging import Logger
+
+    from uvicorn import Server
 
     from quart_socketio._types import (
         Any,
@@ -43,7 +46,6 @@ if TYPE_CHECKING:
         Transports,
     )
     from quart_socketio._types._quart import CustomJsonClass
-    from uvicorn import Server
 
     from ._types._config import RunKwargs
 

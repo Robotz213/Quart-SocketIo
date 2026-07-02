@@ -1,0 +1,15 @@
+repos:
+  - repo: "https://github.com/astral-sh/ruff-pre-commit"
+    rev: "v0.15.19"
+    hooks:
+      - id: "ruff"
+        args: [--fix]
+      - id: "ruff-format"
+        args: [--check]
+  - repo: "local"
+    hooks:
+      - id: "pyright"
+        name: "pyright"
+        entry: "uv run pyright --pythonpath .venv/bin/python"
+        language: "system"
+        pass_filenames: false

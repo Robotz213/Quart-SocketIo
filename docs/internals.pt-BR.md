@@ -4,10 +4,10 @@
 
 Quart-SocketIo tem três camadas principais:
 
-1. API pública em `pulseio.__init__`, `SocketIO`, `Namespace` e helpers.
-2. Controlador em `pulseio.core.Controller`, que cria o servidor Socket.IO,
+1. API pública em `quart_socketio.__init__`, `SocketIO`, `Namespace` e helpers.
+2. Controlador em `quart_socketio.core.Controller`, que cria o servidor Socket.IO,
    instala middleware e monta contexto Quart para eventos.
-3. Middleware ASGI em `pulseio.middleware`, que roteia tráfego Socket.IO e
+3. Middleware ASGI em `quart_socketio.middleware`, que roteia tráfego Socket.IO e
    ajusta headers de proxy antes de entregar chamadas ao app.
 
 ## Fluxo de inicialização
@@ -53,20 +53,20 @@ Não use em código novo.
 
 ## Compatibilidade com typo público
 
-O arquivo `pulseio.middleare` reexporta `QuartSocketIOMiddleware` de
-`pulseio.middleware`. Ele existe para manter imports antigos funcionando:
+O arquivo `quart_socketio.middleare` reexporta `QuartSocketIOMiddleware` de
+`quart_socketio.middleware`. Ele existe para manter imports antigos funcionando:
 
 ```python
-from pulseio.middleare import QuartSocketIOMiddleware
+from quart_socketio.middleare import QuartSocketIOMiddleware
 ```
 
 Código novo deve importar:
 
 ```python
-from pulseio.middleware import QuartSocketIOMiddleware
+from quart_socketio.middleware import QuartSocketIOMiddleware
 ```
 
 ## Tipos internos
 
-`pulseio._types` concentra aliases e `TypedDicts` usados na tipagem interna.
+`quart_socketio._types` concentra aliases e `TypedDicts` usados na tipagem interna.
 Eles ajudam o desenvolvimento, mas não são a API principal para usuários.

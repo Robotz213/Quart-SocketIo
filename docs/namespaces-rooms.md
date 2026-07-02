@@ -2,11 +2,11 @@
 
 ## Class-based namespaces
 
-Subclass `pulseio.Namespace` to group related events. Methods prefixed with
+Subclass `quart_socketio.Namespace` to group related events. Methods prefixed with
 `on_` are used as handlers.
 
 ```python
-from pulseio import Namespace
+from quart_socketio import Namespace
 
 
 class ChatNamespace(Namespace):
@@ -28,7 +28,7 @@ instance namespace when no namespace is provided.
 Rooms let you send messages to groups of clients within a namespace.
 
 ```python
-from pulseio import emit, join_room, leave_room, rooms
+from quart_socketio import emit, join_room, leave_room, rooms
 
 
 @socketio.on("join", namespace="/chat")
@@ -55,7 +55,7 @@ async def my_rooms(data):
 `close_room()` removes users from a room and deletes the room on the server.
 
 ```python
-from pulseio import close_room
+from quart_socketio import close_room
 
 
 @socketio.on("close room")

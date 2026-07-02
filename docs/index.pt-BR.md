@@ -16,22 +16,22 @@ Socket.IO em um middleware ASGI.
 
 ## O que existe no projeto
 
-- `pulseio.SocketIO`: extensão principal que registra eventos, namespaces,
+- `quart_socketio.SocketIO`: extensão principal que registra eventos, namespaces,
   middleware e servidor ASGI.
 - Helpers de contexto: `emit`, `send`, `call`, `join_room`, `leave_room`,
   `close_room`, `rooms` e `disconnect`.
-- `pulseio.Namespace`: base para organizar namespaces por classe.
-- `pulseio.Config`: defaults e opções de configuração do servidor.
-- `pulseio.middleware.QuartSocketIOMiddleware`: middleware ASGI que integra
+- `quart_socketio.Namespace`: base para organizar namespaces por classe.
+- `quart_socketio.Config`: defaults e opções de configuração do servidor.
+- `quart_socketio.middleware.QuartSocketIOMiddleware`: middleware ASGI que integra
   Quart, Socket.IO e headers de proxy.
-- Exceções customizadas em `pulseio.common.exceptions`.
-- Tipos auxiliares em `pulseio._types`.
+- Exceções customizadas em `quart_socketio.common.exceptions`.
+- Tipos auxiliares em `quart_socketio._types`.
 
 ## Exemplo mínimo
 
 ```python
 from quart import Quart
-from pulseio import SocketIO, emit
+from quart_socketio import SocketIO, emit
 
 app = Quart(__name__)
 socketio = SocketIO(app=app)

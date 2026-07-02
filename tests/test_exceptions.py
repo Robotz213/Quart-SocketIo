@@ -1,4 +1,5 @@
 import pytest
+
 from quart_socketio.common.exceptions import (
     QuartRuntimeError,
     QuartSocketioError,

@@ -4,28 +4,28 @@ Esta página é gerada a partir do código e dos docstrings via `mkdocstrings`.
 
 ## Pacote principal
 
-::: pulseio
+::: quart_socketio
 
 ## SocketIO
 
-::: pulseio.main.SocketIO
+::: quart_socketio.main.SocketIO
 
 ## Helpers de contexto
 
-::: pulseio._utils
+::: quart_socketio.\_utils
 
 ## Namespace
 
-::: pulseio.namespace.Namespace
+::: quart_socketio.namespace.Namespace
 
 ## Config
 
-::: pulseio.config
+::: quart_socketio.config
 
 ## Middleware
 
-::: pulseio.middleware
+::: quart_socketio.middleware
 
 ## Exceções
 
-::: pulseio.common.exceptions
+::: quart_socketio.common.exceptions

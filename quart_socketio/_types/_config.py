@@ -18,6 +18,7 @@ if TYPE_CHECKING:
 
     from quart import Quart
     from quart.json.provider import JSONProvider
+
     from quart_socketio._types import (
         Any,
         AsyncMode,

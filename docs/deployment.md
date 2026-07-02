@@ -2,7 +2,7 @@
 
 ## Uvicorn runner
 
-`socketio.run(app)` uses `pulseio._uvicorn.run_uvicorn()` internally.
+`socketio.run(app)` uses `quart_socketio._uvicorn.run_uvicorn()` internally.
 
 ```python
 socketio.run(app, host="0.0.0.0", port=8000, log_level="info")

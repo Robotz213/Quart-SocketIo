@@ -58,7 +58,7 @@ O helper global `emit()` deve ser usado dentro de handlers Socket.IO. Ele usa
 atual quando `broadcast=False`.
 
 ```python
-from pulseio import emit
+from quart_socketio import emit
 
 
 @socketio.event
@@ -72,7 +72,7 @@ async def ping(data):
 `call()` emite um evento e aguarda o acknowledgement do cliente até o timeout.
 
 ```python
-from pulseio import call, send
+from quart_socketio import call, send
 
 
 @socketio.event
@@ -86,7 +86,7 @@ async def needs_ack(data):
 `disconnect()` encerra a conexão do cliente atual, ou de um `sid` informado.
 
 ```python
-from pulseio import disconnect
+from quart_socketio import disconnect
 
 
 @socketio.event
