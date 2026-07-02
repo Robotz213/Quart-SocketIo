@@ -183,11 +183,11 @@ async def send(
                      pass a list.
     :param ignore_queue: Only used when a message queue is configured. If
                          set to ``True``, the event is emitted to the
-                         clients diretamente, sem passar pela fila.
-                         Isso é mais eficiente, mas só funciona quando um
-                         único processo de servidor é usado, ou quando há um
-                         único destinatário. É recomendável deixar sempre este
-                         parâmetro com seu valor padrão ``False``.
+                         clients directly, without going through the queue.
+                         This is more efficient, but only works when a single
+                         server process is used, or when there is a single
+                         addressee. It is recommended to always leave this
+                         parameter with its default value of ``False``.
     """
     namespace = namespace if namespace is not None else request.namespace
     to = to or room

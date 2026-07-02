@@ -41,9 +41,16 @@ class Reason:
 
 
 class SocketIO(Controller):
+    """Expose the Quart-SocketIO extension API."""
+
     reason: type[Reason] = Reason
 
     def __init__(self, **kwargs: Any) -> None:
+        """Create a Socket.IO extension instance.
+
+        Args:
+            **kwargs (Any): Socket.IO and server configuration.
+        """
         self.environments: dict[str, dict[str, Any]] = {}
         self.enviroments = self.environments
         super().__init__(**kwargs)
@@ -137,6 +144,19 @@ class SocketIO(Controller):
         handler: Callable[..., Any],
         environ: dict[str, Any] | None = None,
     ) -> Any:
+        """Run an event handler inside the proper Quart context.
+
+        Args:
+            event (str): Socket.IO event name.
+            namespace (str | None): Socket.IO namespace.
+            sid (str | None): Socket.IO session ID.
+            data (dict[str, Any]): Handler keyword arguments.
+            handler (Callable[..., Any]): Event handler to execute.
+            environ (dict[str, Any] | None): Socket.IO environment.
+
+        Returns:
+            Any: Handler result or an error string.
+        """
         app: Quart = self.sockio_mw.quart_app
         if event == "disconnect":
             try:
@@ -202,6 +222,15 @@ class SocketIO(Controller):
         """
 
         def decorator(handler: Function) -> Function:
+            """Wrap and register the provided event handler.
+
+            Args:
+                handler (Function): Function that handles the event.
+
+            Returns:
+                Function: Original handler.
+            """
+
             @wraps(handler)
             async def _handler(
                 **kwargs: Any,
@@ -263,6 +292,14 @@ class SocketIO(Controller):
         # the decorator was invoked with arguments
 
         def set_handler(handler: Callable[..., Any]) -> Callable[..., Any]:
+            """Register a decorated function by its own name.
+
+            Args:
+                handler (Callable[..., Any]): Function to register.
+
+            Returns:
+                Callable[..., Any]: Original handler.
+            """
             return self.on(handler.__name__, *args, **kwargs)(handler)
 
         return set_handler
@@ -272,6 +309,15 @@ class SocketIO(Controller):
         event: str,
         namespace: str,
     ) -> Callable[..., Any] | None:
+        """Find a registered event handler.
+
+        Args:
+            event (str): Socket.IO event name.
+            namespace (str): Socket.IO namespace.
+
+        Returns:
+            Callable[..., Any] | None: Registered handler when found.
+        """
         filter_ = list(
             filter(
                 lambda x: x[0] == event and x[2] == namespace,
@@ -281,6 +327,14 @@ class SocketIO(Controller):
         return filter_[0][1] if len(filter_) > 0 else None
 
     def get_namespace_handler(self, namespace: str) -> Namespace | None:
+        """Find a registered namespace handler.
+
+        Args:
+            namespace (str): Socket.IO namespace.
+
+        Returns:
+            Namespace | None: Namespace handler when registered.
+        """
 
         handler = None
         if namespace in self.server.namespace_handlers:
@@ -294,7 +348,16 @@ class SocketIO(Controller):
         sid: str,
         namespace: str,
     ) -> dict[str, Any]:
+        """Return the environment for a Socket.IO client.
 
+        Args:
+            args (tuple[Any]): Raw Socket.IO event arguments.
+            sid (str): Socket.IO session ID.
+            namespace (str): Socket.IO namespace.
+
+        Returns:
+            dict[str, Any]: Stored or server-provided environment.
+        """
         return (
             self.environments.get(
                 sid,
@@ -313,7 +376,20 @@ class SocketIO(Controller):
         args: tuple[Any],
         kwargs: dict[str, Any],
     ) -> dict[str, Any]:
+        """Build handler keyword arguments from event data.
 
+        Args:
+            sid (str): Socket.IO session ID.
+            event (str): Socket.IO event name.
+            handler (Callable): Handler being dispatched.
+            namespace (str): Socket.IO namespace.
+            environ (dict[str, Any]): Socket.IO environment.
+            args (tuple[Any]): Raw Socket.IO event arguments.
+            kwargs (dict[str, Any]): Existing keyword arguments.
+
+        Returns:
+            dict[str, Any]: Keyword arguments for the handler.
+        """
         ignore_data = [sid, event, namespace, environ, handler]
         data: dict[str, Any] = {}
         for x in args:
@@ -379,6 +455,17 @@ class SocketIO(Controller):
         """
 
         def decorator(exception_handler: Function) -> Function:
+            """Register the namespace exception handler.
+
+            Args:
+                exception_handler (Function): Error handler function.
+
+            Returns:
+                Function: Original error handler.
+
+            Raises:
+                QuartValueError: If the handler is not callable.
+            """
             if not callable(exception_handler):
                 raise_value_error("exception_handler must be callable")
             self.config["exception_handlers"][namespace] = exception_handler
@@ -498,6 +585,15 @@ class SocketIO(Controller):
                 *args: Any,
                 **kwargs: Any,
             ) -> Any:
+                """Run the emit callback with async awareness.
+
+                Args:
+                    *args (Any): Callback positional arguments.
+                    **kwargs (Any): Callback keyword arguments.
+
+                Returns:
+                    Any: Callback result.
+                """
                 if iscoroutinefunction(original_callback):
                     return await original_callback(*args, **kwargs)
 

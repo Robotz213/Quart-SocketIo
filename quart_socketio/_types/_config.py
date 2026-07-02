@@ -31,6 +31,8 @@ if TYPE_CHECKING:
 
 
 class Config(TypedDict):
+    """Describe the Quart-SocketIO configuration mapping."""
+
     handlers: object
     app: Quart
     host: str
@@ -75,6 +77,14 @@ class Config(TypedDict):
 
 
 def wrap_config(cls: object) -> type[Config]:
+    """Cast a class-like object to the Config type.
+
+    Args:
+        cls (object): Object to expose as a configuration type.
+
+    Returns:
+        type[Config]: Cast configuration type.
+    """
 
     return cast("type[Config]", cls)
 
@@ -87,6 +97,8 @@ InterfaceType = Literal["auto", "asgi3", "asgi2", "wsgi"]
 
 
 class RunKwargs(TypedDict):
+    """Describe Uvicorn keyword arguments accepted by run()."""
+
     host: str
     port: int
     uds: str | None

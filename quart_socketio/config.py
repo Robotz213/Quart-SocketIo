@@ -9,6 +9,11 @@ class Config(UserDict[str, Any]):
     """Configuration for the Quart-SocketIO application."""
 
     def __init__(self, **kwargs: Any) -> None:
+        """Create a configuration object with isolated defaults.
+
+        Args:
+            **kwargs: Configuration values that override defaults.
+        """
 
         super().__init__(deepcopy(DEFAULTS))
 

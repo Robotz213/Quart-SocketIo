@@ -51,11 +51,20 @@ if TYPE_CHECKING:
 
 
 class EnvironError(Exception):
+    """Represent a missing Socket.IO environment."""
+
     def __init__(self, *args: object) -> None:
+        """Create an environment lookup error.
+
+        Args:
+            *args (object): Exception arguments.
+        """
         Exception.__init__(self, *args)
 
 
 class Controller:
+    """Coordinate the Quart app, Socket.IO server, and ASGI server."""
+
     server: SocketIo = None  # pyright: ignore[reportAssignmentType]
     asgi_server: Server | HypercornServer = None
     shutdown_event = Event()
@@ -63,7 +72,8 @@ class Controller:
     sockio_mw: Middleware = None  # pyright: ignore[reportAssignmentType]
 
     @overload
-    def __init__(self) -> None: ...
+    def __init__(self) -> None:
+        """Create an unbound Socket.IO controller."""
 
     @overload
     def __init__(
@@ -109,12 +119,61 @@ class Controller:
         message_queue: str,
         channel: Channel,
         async_mode: AsyncMode = "asgi",
-    ) -> None: ...
+    ) -> None:
+        """Create a configured Socket.IO controller.
+
+        Args:
+            handlers (object): Initial event handlers.
+            app (Quart): Quart application to initialize.
+            host (str): Server host.
+            port (int): Server port.
+            debug (bool): Enable Quart debug mode.
+            use_reloader (bool): Enable server reload support.
+            allow_unsafe_werkzeug (bool): Allow unsafe Werkzeug use.
+            extra_files (list[str]): Files watched by the reloader.
+            reloader_options (dict[str, Any]): Reloader settings.
+            server_options (dict[str, Any]): Server options.
+            server (SocketIo): Existing Socket.IO server.
+            namespace_handlers (list[Any]): Namespace handlers.
+            exception_handlers (dict[str, Any]): Error handlers.
+            default_exception_handler (Any): Default error handler.
+            manage_session (bool): Enable Socket.IO session handling.
+            log_config (dict[str, Any]): Logging configuration.
+            log_level (int): Logging level.
+            client_manager (QueueClasses): Message queue manager.
+            logger (bool): Enable Socket.IO logging.
+            socketio_path (Literal["/socket.io"]): Socket.IO path.
+            engineio_path (Literal["/engine.io"]): Engine.IO path.
+            json (CustomJsonClass): JSON provider.
+            async_handlers (bool): Run handlers asynchronously.
+            always_connect (bool): Accept connections before handlers.
+            namespaces (str | list[str]): Allowed namespaces.
+            ping_interval (int | tuple): Ping interval.
+            ping_timeout (int): Ping timeout.
+            max_http_buffer_size (int): Maximum HTTP buffer size.
+            allow_upgrades (bool): Allow transport upgrades.
+            http_compression (bool): Enable HTTP compression.
+            compression_threshold (int): Compression threshold.
+            cookie (str | dict[str, Any]): Engine.IO cookie setting.
+            cors_allowed_origins (str | list[str]): Allowed origins.
+            cors_credentials (bool): Allow CORS credentials.
+            monitor_clients (bool): Monitor disconnected clients.
+            transports (Transports): Enabled transports.
+            engineio_logger (bool | Logger): Engine.IO logger.
+            message_queue (str): Message queue URL.
+            channel (Channel): Message queue channel.
+            async_mode (AsyncMode): Async backend name.
+        """
 
     def __init__(
         self,
         **kwargs: Kw,
     ) -> None:
+        """Create the controller and initialize the app when provided.
+
+        Args:
+            **kwargs (Kw): Socket.IO and server configuration.
+        """
         kwargs = dict(kwargs)
         app: Quart = kwargs.pop("app", None)  # pyright: ignore[reportAssignmentType]
         self.config = Config(app=app, **kwargs)
@@ -123,6 +182,11 @@ class Controller:
             self.init_app(app=app, **kwargs)
 
     def configure_server(self) -> socketio.AsyncServer:
+        """Create and configure the underlying Socket.IO server.
+
+        Returns:
+            socketio.AsyncServer: Configured Socket.IO server.
+        """
         server = socketio.AsyncServer(**self.config)
         for handler in self.config["handlers"]:  # pyright: ignore[reportGeneralTypeIssues]
             server.on(handler[0], handler[1], namespace=handler[2])
@@ -140,8 +204,9 @@ class Controller:
     ) -> None:
         """Initialize the SocketIO extension for the given Quart application.
 
-        :param app: The Quart application instance to initialize with SocketIO.
-        :param kwargs: Additional keyword arguments for server configuration.
+        Args:
+            app (Quart): Quart application to initialize.
+            **kwargs (Kw): Additional server configuration.
         """
         self.app = app or self.config["app"]
         self.config.update(app=app)
@@ -177,6 +242,15 @@ class Controller:
         app: Quart | None = None,
         **kwargs: Unpack[RunKwargs],
     ) -> None:
+        """Run the configured ASGI server.
+
+        Args:
+            app (Quart | None): Optional app override.
+            **kwargs (Unpack[RunKwargs]): Server runtime options.
+
+        Raises:
+            QuartValueError: If no Quart application is configured.
+        """
         self.config.update(**kwargs)  # pyright: ignore[reportCallIssue]
         self.server_options = self.config
 
@@ -200,6 +274,7 @@ class Controller:
         self.uvicorn_server.run()
 
     async def shutdown(self) -> None:
+        """Shut down the Quart, Socket.IO, and Uvicorn servers."""
 
         with suppress(Exception):
             await self.app.shutdown()
@@ -214,6 +289,11 @@ class Controller:
         print("Server stopped!")  # noqa: T201  # noqa: T201
 
     def client_manager(self, app: Quart) -> None:
+        """Configure the message queue client manager.
+
+        Args:
+            app (Quart): Quart application associated with the manager.
+        """
         url = self.server_options["message_queue"]
         channel: str = self.server_options["channel"]
         write_only: bool = app is None
@@ -240,17 +320,28 @@ class Controller:
         so here to prevent any ambiguities we replace it with wrappers
         that ensure that the app context is always present
 
-        Arguments:
+        Args:
             app (Quart): The Quart application instance to use for the context.
 
         """
 
         class QuartSafeJson:
+            """Wrap Quart JSON calls in an application context."""
+
             @staticmethod
             async def dumps(
                 *args: str | int | bool,
                 **kwargs: str | int | bool,
             ) -> str:
+                """Serialize values within the Quart app context.
+
+                Args:
+                    *args (str | int | bool): Positional JSON arguments.
+                    **kwargs (str | int | bool): Keyword JSON arguments.
+
+                Returns:
+                    str: Serialized JSON string.
+                """
                 async with app.app_context():
                     return quart_json.dumps(*args, **kwargs)
 
@@ -259,6 +350,15 @@ class Controller:
                 *args: str | int | bool,
                 **kwargs: str | int | bool,
             ) -> dict[str, Any | int | bool]:
+                """Deserialize values within the Quart app context.
+
+                Args:
+                    *args (str | int | bool): Positional JSON arguments.
+                    **kwargs (str | int | bool): Keyword JSON arguments.
+
+                Returns:
+                    dict[str, Any | int | bool]: Deserialized JSON value.
+                """
                 async with app.app_context():
                     return quart_json.loads(*args, **kwargs)
 
@@ -266,7 +366,14 @@ class Controller:
 
     @classmethod
     def load_headers(cls, environ: dict[str, Any]) -> Headers:  # noqa: C901
-        """Load headers from the ASGI scope."""
+        """Load headers from the ASGI scope.
+
+        Args:
+            environ (dict[str, Any]): Socket.IO environment mapping.
+
+        Returns:
+            Headers: Normalized Werkzeug headers.
+        """
         headers = Headers()
 
         io_headers: list[tuple[Any, Any]] = environ["asgi.scope"]["headers"]
@@ -323,7 +430,8 @@ class Controller:
         This method is called to manage user sessions when the Socket.IO server
         is initialized with `manage_session=True`. It ensures that the session
         is properly saved and restored during Socket.IO events.
-        :param environ: The ASGI environment dictionary.
+        Args:
+            environ (dict[str, str | dict[str, Any]]): ASGI environment.
         """
         app = self.config["app"]
 
@@ -352,7 +460,16 @@ class Controller:
         sid: str,
         namespace: str,
     ) -> Request:
+        """Build a Quart request for a Socket.IO event.
 
+        Args:
+            environ (dict[str, Any | dict[str, Any]]): Socket.IO environment.
+            sid (str): Socket.IO session ID.
+            namespace (str): Socket.IO namespace.
+
+        Returns:
+            Request: Quart request object with Socket.IO attributes.
+        """
         request = Request(
             method=environ["REQUEST_METHOD"],
             scheme=environ["asgi.scope"].get("scheme", "http"),
@@ -371,6 +488,17 @@ class Controller:
         return request
 
     async def make_websocket(self, **kwargs: Any) -> Websocket:
+        """Build a Quart websocket for a Socket.IO event.
+
+        Args:
+            **kwargs (Any): Socket.IO session and namespace values.
+
+        Returns:
+            Websocket: Quart websocket object with Socket.IO attributes.
+
+        Raises:
+            EnvironError: If the Socket.IO environment is unavailable.
+        """
         kwargs = kwargs or {}
         environ = self.server.get_environ(
             kwargs["sid"],
@@ -402,16 +530,24 @@ class Controller:
         self,
         handler_args: tuple[str, Callable[..., Any], str],
     ) -> None:
+        """Register a handler tuple with the Socket.IO server.
 
+        Args:
+            handler_args (tuple[str, Callable[..., Any], str]): Event,
+                handler, and namespace tuple.
+        """
         event, handler, namespace = handler_args
         self.on(event=event, namespace=namespace)(handler)  # pyright: ignore[reportAttributeAccessIssue]
 
     def register_namespace(self, namespace_handler: Namespace) -> None:
         """Register a namespace handler object.
 
-        :param namespace_handler: An instance of a :class:`Namespace` subclass
-                                  that handles all the event traffic for a
-                                  namespace.
+        Args:
+            namespace_handler (Namespace): Namespace handler instance.
+
+        Raises:
+            QuartValueError: If the value is not a namespace.
+            QuartRuntimeError: If the server is not initialized.
         """
         if not isinstance(namespace_handler, Namespace):
             raise_value_error("Not a namespace instance")
@@ -424,9 +560,12 @@ class Controller:
     def unregister_namespace(self, namespace_handler: Namespace) -> None:
         """Unregister a namespace handler object.
 
-        :param namespace_handler: An instance of a :class:`Namespace` subclass
-                                  that handles all the event traffic for a
-                                  namespace.
+        Args:
+            namespace_handler (Namespace): Namespace handler instance.
+
+        Raises:
+            QuartValueError: If the value is not a namespace.
+            QuartRuntimeError: If the server is not initialized.
         """
         if not isinstance(namespace_handler, Namespace):
             raise_value_error("Not a namespace instance")

@@ -4,6 +4,8 @@ from typing import Protocol
 
 
 class CustomJsonClass(Protocol):
+    """Define the JSON provider protocol used by Quart-SocketIO."""
+
     @staticmethod
     def dump(
         obj,  # noqa: ANN001

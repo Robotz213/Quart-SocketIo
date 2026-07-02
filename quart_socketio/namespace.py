@@ -23,11 +23,19 @@ if TYPE_CHECKING:
 
 
 class Namespace(BaseNamespace):
+    """Provide a Quart-aware asynchronous Socket.IO namespace."""
+
     def __init__(
         self,
         namespace: str | None = None,
         socketio: SocketIO | None = None,
     ) -> None:
+        """Create a namespace bound to an optional SocketIO instance.
+
+        Args:
+            namespace (str | None): Namespace path.
+            socketio (SocketIO | None): SocketIO extension instance.
+        """
         super().__init__(namespace)
         self.socketio = cast("SocketIO", socketio)
 
@@ -101,6 +109,19 @@ class Namespace(BaseNamespace):
         environ: dict[str, Any] | None = None,
         handler: Callable[..., Any] | None = None,
     ) -> Any:
+        """Run a namespace event handler in the Quart context.
+
+        Args:
+            data (dict[str, Any]): Handler keyword arguments.
+            event (str): Socket.IO event name.
+            namespace (str | None): Socket.IO namespace.
+            sid (str | None): Socket.IO session ID.
+            environ (dict[str, Any] | None): Socket.IO environment.
+            handler (Callable[..., Any] | None): Handler to execute.
+
+        Returns:
+            Any: Handler result, error string, or None.
+        """
 
         if not handler:
             return None
@@ -145,6 +166,11 @@ class Namespace(BaseNamespace):
                 return err
 
     def _set_server(self, socketio: SocketIO) -> None:
+        """Attach a Socket.IO server to this namespace.
+
+        Args:
+            socketio (SocketIO): SocketIO extension or async server.
+        """
         from . import SocketIO
 
         if not self.socketio:
@@ -157,11 +183,21 @@ class Namespace(BaseNamespace):
             self.server = socketio
 
     def set_socketio(self, socketio: SocketIO) -> None:
+        """Attach the extension and middleware to this namespace.
+
+        Args:
+            socketio (SocketIO): SocketIO extension instance.
+        """
 
         self._set_server(socketio)
         self.sockio_mw = socketio.sockio_mw
 
     def _set_socketio(self, socketio: SocketIO) -> None:
+        """Attach the extension server to this namespace.
+
+        Args:
+            socketio (SocketIO): SocketIO extension instance.
+        """
 
         self._set_server(socketio)
 
@@ -215,6 +251,12 @@ class Namespace(BaseNamespace):
         )
 
     async def save_session(self, sid: str, session: SessionMixin) -> None:
+        """Save a Socket.IO session in the current namespace.
+
+        Args:
+            sid (str): Socket.IO session ID.
+            session (SessionMixin): Session data to save.
+        """
         return await self.server.save_session(
             sid=sid,
             session=session,
@@ -222,6 +264,14 @@ class Namespace(BaseNamespace):
         )
 
     def get_handler(self, event: str) -> Callable[..., Any] | None:
+        """Return the handler method for an event name.
+
+        Args:
+            event (str): Socket.IO event name.
+
+        Returns:
+            Callable[..., Any] | None: Handler method when found.
+        """
         return cast(
             "Callable[..., Any] | None",
             getattr(self, "on_" + (event or ""), None),

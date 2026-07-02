@@ -1,4 +1,4 @@
-"""Tipos do Quart-Socketio."""
+"""Expose shared Quart-SocketIO type aliases."""
 
 from __future__ import annotations
 

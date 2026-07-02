@@ -13,12 +13,21 @@ if TYPE_CHECKING:
 
 
 class QuartSocketIOMiddleware(ASGIApp):
+    """Route ASGI traffic between Socket.IO and Quart."""
+
     def __init__(
         self,
         socketio_app: AsyncServer,
         quart_app: Quart,
         socketio_path: str = "socket.io",
     ) -> None:
+        """Create the middleware wrapper.
+
+        Args:
+            socketio_app (AsyncServer): Socket.IO ASGI server.
+            quart_app (Quart): Quart application.
+            socketio_path (str): Socket.IO endpoint path.
+        """
         self.quart_app = quart_app
         self.mode = quart_app.config.get("SOCKETIO_MODE", "modern")
         self.trusted_hops = quart_app.config.get("SOCKETIO_TRUSTED_HOPS", 1)
@@ -34,6 +43,13 @@ class QuartSocketIOMiddleware(ASGIApp):
         receive: Callable,
         send: Callable,
     ) -> None:
+        """Handle an ASGI request and apply trusted proxy headers.
+
+        Args:
+            scope (Scope): ASGI connection scope.
+            receive (Callable): ASGI receive callable.
+            send (Callable): ASGI send callable.
+        """
         host: str | None = None
         if scope["type"] == "http" or scope["type"] == "websocket":
             scope = deepcopy(scope)
@@ -99,6 +115,16 @@ def _get_trusted_value(
     headers: Iterable[tuple[bytes, bytes]],
     trusted_hops: int,
 ) -> str | None:
+    """Return the trusted value for a forwarded header.
+
+    Args:
+        name (bytes): Header name to inspect.
+        headers (Iterable[tuple[bytes, bytes]]): ASGI header pairs.
+        trusted_hops (int): Number of trusted proxy hops.
+
+    Returns:
+        str | None: Trusted header value when available.
+    """
     if trusted_hops == 0:
         return None
 

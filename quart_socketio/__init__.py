@@ -1,3 +1,6 @@
+from .config import Config
+from .main import SocketIO
+from .namespace import Namespace
 from .utils import (
     call,
     close_room,
@@ -8,9 +11,6 @@ from .utils import (
     rooms,
     send,
 )
-from .config import Config
-from .main import SocketIO
-from .namespace import Namespace
 
 __all__ = [
     "Config",
