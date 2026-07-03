@@ -90,10 +90,10 @@ def run_uvicorn(**kwargs: Unpack[Config]) -> Server:
         }
         dictConfig(log_config)
 
-    loop = "asyncio"
-    if platform.system() != "Windows":
-        loop = "uvloop"
+    system_loop = "uvloop" if platform.system() == "linux" else "windows"
+    loop = kwargs.get("loop", system_loop) or system_loop
 
+    timeout_shutdown = int(kwargs.get("timeout_graceful_shutdown", 5) or 5)
     config = uvicorn.Config(
         app,
         host=host,
@@ -104,6 +104,7 @@ def run_uvicorn(**kwargs: Unpack[Config]) -> Server:
         loop=loop,
         ws="websockets",
         interface="asgi3",
+        timeout_graceful_shutdown=timeout_shutdown,
     )
 
     return uvicorn.Server(config)
