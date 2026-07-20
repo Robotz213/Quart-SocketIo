@@ -1,6 +1,6 @@
+# pyright: reportAttributeAccessIssue=false
 from __future__ import annotations
 
-# pyright: reportAttributeAccessIssue=false
 from typing import TYPE_CHECKING, Any
 
 from quart import current_app, request
@@ -87,14 +87,14 @@ async def call(
     namespace: str | None = None,
     to: Any | None = None,
     room: Any | None = None,
-    timeout: int = 60,  # noqa: ASYNC109
+    timeout_: int = 60,
     ignore_queue: bool = False,
     **kwargs: Any,
 ) -> Any:
     """Emit a SocketIO event and wait for the response.
 
     This function issues an emit with a callback and waits for the callback to
-    be invoked by the client before returning. If the callback isn’t invoked
+    be invoked by the client before returning. If the callback isn't invoked
     before the timeout, then a TimeoutError exception is raised. If the
     Socket.IO connection drops during the wait, this method still waits until
     the specified timeout. Example::
@@ -120,7 +120,7 @@ async def call(
                          single server process is used, or when there is a
                          single addressee. It is recommended to always leave
                          this parameter with its default value of ``False``.
-    """  # noqa: RUF002
+    """
     namespace = namespace if namespace is not None else request.namespace
     to = to or room
     if to is None:
@@ -133,7 +133,7 @@ async def call(
         namespace=namespace,
         to=to,
         ignore_queue=ignore_queue,
-        timeout=timeout,
+        timeout=timeout_,
     )
 
 
