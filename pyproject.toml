@@ -74,7 +74,18 @@ select = ["ALL"]
 # Allow unused variables when underscore-prefixed.
 dummy-variable-rgx = "^(_+|(_+[a-zA-Z0-9_]*[a-zA-Z0-9]+?))$"
 
-ignore = ["ANN401", "CPY", "PLC2701", "PLC", "DOC", "D102", "PLR", "ARG", "PD"]
+ignore = [
+    "ANN401",
+    "CPY",
+    "PLC2701",
+    "PLC",
+    "DOC",
+    "D102",
+    "PLR",
+    "ARG",
+    "PD",
+    "UP",
+]
 
 
 [tool.ruff.format]

@@ -9,6 +9,8 @@ from uvicorn.config import LOGGING_CONFIG, SSL_PROTOCOL_VERSION
 
 from quart_socketio.common.exceptions import raise_value_error
 
+from .constant import load_log_config
+
 if TYPE_CHECKING:
     import asyncio
     import os
@@ -28,11 +30,6 @@ if TYPE_CHECKING:
     )
 
     from ._types._config import Config
-
-
-ACCESS_FMT = (
-    '%(levelprefix)s %(client_addr)s - "%(request_line)s" %(status_code)s'
-)
 
 
 class __UvicornConfig(TypedDict):
@@ -167,7 +164,7 @@ class UvicornConfig(UserDict):
     def to_typed(self) -> __UvicornConfig:
         result: dict[str, object] = {}
 
-        for key in UvicornConfig.__annotations__:
+        for key in __UvicornConfig.__annotations__:
             if key in self.data:
                 # O valor definido na instância tem prioridade.
                 result[key] = self.data[key]
@@ -191,9 +188,14 @@ def run_uvicorn(**kwargs: Unpack[Config]) -> Server:
     """
     import uvicorn
 
+    log_config = kwargs.get("log_config")
+
     # Ensure that the 'app' keyword argument is provided
     if "app" not in kwargs:
         raise_value_error("The 'app' keyword argument must be provided.")
+
+    if not log_config:
+        load_log_config(**kwargs)
 
     system_loop = "uvloop" if platform.system() == "linux" else "windows"
     loop = kwargs.get("loop", system_loop) or system_loop
@@ -202,8 +204,6 @@ def run_uvicorn(**kwargs: Unpack[Config]) -> Server:
     kw_ = UvicornConfig(kwargs).to_typed()
     kw_["loop"] = loop
     kw_["timeout_graceful_shutdown"] = timeout_shutdown
-
-    print(kw_)
 
     config = uvicorn.Config(**kw_)
 
