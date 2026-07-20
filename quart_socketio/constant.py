@@ -5,10 +5,10 @@ ACCESS_FMT = (
 )
 
 
-def load_log_config(**kwargs: str) -> None:
+def load_log_config(**kwargs: str) -> dict[str, str]:
 
     log_level = kwargs.get("log_level", "info")
-    dictConfig({
+    cfg_ = {
         "version": 1,
         "disable_existing_loggers": False,
         "formatters": {
@@ -58,4 +58,7 @@ def load_log_config(**kwargs: str) -> None:
                 "propagate": False,
             },
         },
-    })
+    }
+    dictConfig(cfg_)
+
+    return cfg_
