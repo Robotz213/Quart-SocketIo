@@ -167,7 +167,7 @@ class UvicornConfig(UserDict):
     def to_typed(self) -> __UvicornConfig:
         result: dict[str, object] = {}
 
-        for key in __UvicornConfig.__annotations__:
+        for key in UvicornConfig.__annotations__:
             if key in self.data:
                 # O valor definido na instância tem prioridade.
                 result[key] = self.data[key]
@@ -202,6 +202,8 @@ def run_uvicorn(**kwargs: Unpack[Config]) -> Server:
     kw_ = UvicornConfig(kwargs).to_typed()
     kw_["loop"] = loop
     kw_["timeout_graceful_shutdown"] = timeout_shutdown
+
+    print(kw_)
 
     config = uvicorn.Config(**kw_)
 
