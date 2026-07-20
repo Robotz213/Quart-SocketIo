@@ -188,6 +188,7 @@ def run_uvicorn(**kwargs: Unpack[Config]) -> Server:
     """
     import uvicorn
 
+    kw_ = UvicornConfig(kwargs).to_typed()
     log_config = kwargs.get("log_config")
 
     # Ensure that the 'app' keyword argument is provided
@@ -195,13 +196,13 @@ def run_uvicorn(**kwargs: Unpack[Config]) -> Server:
         raise_value_error("The 'app' keyword argument must be provided.")
 
     if not log_config:
-        load_log_config(**kwargs)
+        cfg_ = load_log_config(**kwargs)
+        kw_["log_config"] = cfg_
 
     system_loop = "uvloop" if platform.system() == "linux" else "windows"
     loop = kwargs.get("loop", system_loop) or system_loop
     timeout_shutdown = int(kwargs.get("timeout_graceful_shutdown", 5) or 5)
 
-    kw_ = UvicornConfig(kwargs).to_typed()
     kw_["loop"] = loop
     kw_["timeout_graceful_shutdown"] = timeout_shutdown
 
