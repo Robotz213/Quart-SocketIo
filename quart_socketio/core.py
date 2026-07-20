@@ -13,7 +13,6 @@ from typing import (
 
 import quart
 import socketio
-from clear import clear
 from quart import Quart, Request, Websocket, session
 from quart import json as quart_json
 from uvicorn.middleware.proxy_headers import ProxyHeadersMiddleware
@@ -285,9 +284,6 @@ class Controller:
         with suppress(Exception):
             await self.uvicorn_server.shutdown()
 
-        clear()
-        print("Server stopped!")  # noqa: T201  # noqa: T201
-
     def client_manager(self, app: Quart) -> None:
         """Configure the message queue client manager.
 
@@ -365,7 +361,7 @@ class Controller:
         self.config["json"] = QuartSafeJson  # pyright: ignore[reportGeneralTypeIssues]
 
     @classmethod
-    def load_headers(cls, environ: dict[str, Any]) -> Headers:  # noqa: C901
+    def load_headers(cls, environ: dict[str, Any]) -> Headers:  # ruff:ignore[complex-structure]
         """Load headers from the ASGI scope.
 
         Args:

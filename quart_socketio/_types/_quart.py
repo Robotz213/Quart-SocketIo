@@ -1,3 +1,4 @@
+# ruff: file-ignore[missing-type-function-argument, missing-type-kwargs]
 from __future__ import annotations
 
 from typing import Protocol
@@ -8,19 +9,19 @@ class CustomJsonClass(Protocol):
 
     @staticmethod
     def dump(
-        obj,  # noqa: ANN001
-        fp,  # noqa: ANN001
+        obj,
+        fp,
         *,
-        skipkeys=False,  # noqa: ANN001
-        ensure_ascii=True,  # noqa: ANN001
-        check_circular=True,  # noqa: ANN001
-        allow_nan=True,  # noqa: ANN001
-        cls=None,  # noqa: ANN001
-        indent=None,  # noqa: ANN001
-        separators=None,  # noqa: ANN001
-        default=None,  # noqa: ANN001
-        sort_keys=False,  # noqa: ANN001
-        **kw,  # noqa: ANN003
+        skipkeys=False,
+        ensure_ascii=True,
+        check_circular=True,
+        allow_nan=True,
+        cls=None,
+        indent=None,
+        separators=None,
+        default=None,
+        sort_keys=False,
+        **kw,
     ) -> str:
         """Serialize ``obj`` as a JSON formatted stream to ``fp`` (a ``.write()``-supporting file-like object).
 
@@ -61,23 +62,23 @@ class CustomJsonClass(Protocol):
         ``.default()`` method to serialize additional types), specify it with
         the ``cls`` kwarg; otherwise ``JSONEncoder`` is used.
 
-        """  # noqa: E501
+        """  # ruff:ignore[line-too-long]
         ...
 
     @staticmethod
     def dumps(
-        obj,  # noqa: ANN001
+        obj,
         *,
-        skipkeys=False,  # noqa: ANN001
-        ensure_ascii=True,  # noqa: ANN001
-        check_circular=True,  # noqa: ANN001
-        allow_nan=True,  # noqa: ANN001
-        cls=None,  # noqa: ANN001
-        indent=None,  # noqa: ANN001
-        separators=None,  # noqa: ANN001
-        default=None,  # noqa: ANN001
-        sort_keys=False,  # noqa: ANN001
-        **kw,  # noqa: ANN003
+        skipkeys=False,
+        ensure_ascii=True,
+        check_circular=True,
+        allow_nan=True,
+        cls=None,
+        indent=None,
+        separators=None,
+        default=None,
+        sort_keys=False,
+        **kw,
     ) -> str:
         """Serialize ``obj`` to a JSON formatted ``str``.
 
@@ -118,20 +119,20 @@ class CustomJsonClass(Protocol):
         ``.default()`` method to serialize additional types), specify it with
         the ``cls`` kwarg; otherwise ``JSONEncoder`` is used.
 
-        """  # noqa: E501
+        """  # ruff:ignore[line-too-long]
         ...
 
     @staticmethod
     def load(
-        fp,  # noqa: ANN001
+        fp,
         *,
-        cls=None,  # noqa: ANN001
-        object_hook=None,  # noqa: ANN001
-        parse_float=None,  # noqa: ANN001
-        parse_int=None,  # noqa: ANN001
-        parse_constant=None,  # noqa: ANN001
-        object_pairs_hook=None,  # noqa: ANN001
-        **kw,  # noqa: ANN003
+        cls=None,
+        object_hook=None,
+        parse_float=None,
+        parse_int=None,
+        parse_constant=None,
+        object_pairs_hook=None,
+        **kw,
     ) -> object:
         """Deserialize ``fp`` (a ``.read()``-supporting file-like object containing a JSON document) to a Python object.
 
@@ -148,20 +149,20 @@ class CustomJsonClass(Protocol):
 
         To use a custom ``JSONDecoder`` subclass, specify it with the ``cls``
         kwarg; otherwise ``JSONDecoder`` is used.
-        """  # noqa: E501
+        """  # ruff:ignore[line-too-long]
         ...
 
     @staticmethod
     def loads(
-        s,  # noqa: ANN001
+        s,
         *,
-        cls=None,  # noqa: ANN001
-        object_hook=None,  # noqa: ANN001
-        parse_float=None,  # noqa: ANN001
-        parse_int=None,  # noqa: ANN001
-        parse_constant=None,  # noqa: ANN001
-        object_pairs_hook=None,  # noqa: ANN001
-        **kw,  # noqa: ANN003
+        cls=None,
+        object_hook=None,
+        parse_float=None,
+        parse_int=None,
+        parse_constant=None,
+        object_pairs_hook=None,
+        **kw,
     ) -> object:
         """Deserialize ``s`` (a ``str``, ``bytes`` or ``bytearray`` instance containing a JSON document) to a object.
 
@@ -193,5 +194,5 @@ class CustomJsonClass(Protocol):
 
         To use a custom ``JSONDecoder`` subclass, specify it with the ``cls``
         kwarg; otherwise ``JSONDecoder`` is used.
-        """  # noqa: E501
+        """  # ruff:ignore[line-too-long]
         ...
