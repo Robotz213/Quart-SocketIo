@@ -32,7 +32,7 @@ if TYPE_CHECKING:
     from ._types._config import Config
 
 
-class __UvicornConfig(TypedDict):
+class UvicornConfigDict(TypedDict):
     app: ASGIApplication | Callable[..., Any] | str
     host: str
     port: int
@@ -161,10 +161,10 @@ class UvicornConfig(UserDict):
     h11_max_incomplete_event_size: int | None = None
     reset_contextvars: bool = False
 
-    def to_typed(self) -> __UvicornConfig:
+    def to_typed(self) -> UvicornConfigDict:
         result: dict[str, object] = {}
 
-        for key in __UvicornConfig.__annotations__:
+        for key in UvicornConfigDict.__annotations__:
             if key in self.data:
                 # O valor definido na instância tem prioridade.
                 result[key] = self.data[key]
@@ -176,7 +176,7 @@ class UvicornConfig(UserDict):
                 msg = f"O campo obrigatório {key!r} não foi definido."
                 raise ValueError(msg)
 
-        return cast("__UvicornConfig", result)
+        return cast("UvicornConfigDict", result)
 
 
 def run_uvicorn(**kwargs: Unpack[Config]) -> Server:
