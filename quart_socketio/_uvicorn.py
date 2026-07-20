@@ -197,6 +197,7 @@ def run_uvicorn(**kwargs: Unpack[Config]) -> Server:
 
     if not log_config:
         cfg_ = load_log_config(**kwargs)
+        kw_["log_level"] = "info"
         kw_["log_config"] = cfg_
 
     system_loop = "uvloop" if platform.system() == "linux" else "windows"
